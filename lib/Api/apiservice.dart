@@ -55,7 +55,6 @@ class ApiService {
   //final String baseUrl = "https://dev.grosirmobil.id/api/";
   final String baseUrl = "https://$host";
 
-
   Future<Nson> asalKendaraanApi() async {
     var response = await getRaw("/api/registrasi/AsalKendaraanMobile");
     return getNson(response);
@@ -146,22 +145,26 @@ class ApiService {
     var response = await getRaw("/api/registrasi/Propinsi");
     return getNson(response);
   }
-  Future<Nson> questionFiveApi() async {
-    var response = await getRaw("/api/registrasi/SumberInfoMobile");
-        return getNson(response);
-  }
 
-  Future<Nson> questionFourApi() async {
-    var response = await getRaw("/api/registrasi/JenisMobilMobile");
-    return getNson(response);
-  }
 
-  Future<Nson> questionThreeApi() async {
-    var response = await getRaw("/api/registrasi/KebutuhanPembelianMobile");
+  Future<Nson> questionOneApi() async {
+    var response = await getRaw("/api/registrasi/KebutuhanKendaraanBulanMobile");
     return getNson(response);
   }
   Future<Nson> questionTwoApi() async {
+    var response = await getRaw("/api/registrasi/KebutuhanPembelianMobile");
+    return getNson(response);
+  }
+  Future<Nson> questionThreeApi() async {
+    var response = await getRaw("/api/registrasi/JenisMobilMobile");
+    return getNson(response);
+  }
+  Future<Nson> questionFourApi() async {
     var response = await getRaw("/api/registrasi/Rata2PenjualanMobile");
+    return getNson(response);
+  }
+  Future<Nson> questionFiveApi() async {
+    var response = await getRaw("/api/registrasi/SumberInfoMobile");
     return getNson(response);
   }
   Future<Nson> resendOtpApi(Nson nArgs) async {
@@ -172,6 +175,10 @@ class ApiService {
   Future<Nson> saveDataRegisterApi(Nson nArgs) async {
     var response = await postRaw("/api/registrasi/SimpanMobile", body: nArgs.asMap());
     return getNson(response);
+  }
+  Future<http.Response> saveDataRegisterRes(Nson nArgs) async {
+    var response = await postRaw("/api/registrasi/SimpanMobile", body: nArgs.asMap());
+    return response;
   }
 
   Future<Nson> setAndUnsetFavoriteApi(Nson nArgs) async {
@@ -215,7 +222,7 @@ class ApiService {
   var client = http.Client();
 
   Future<String> getProfiles() async {
-    final response = await client.get("$baseUrl/api/profile");
+    final response = await client.get(Uri.parse("$baseUrl/api/profile"));
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -252,6 +259,7 @@ class ApiService {
     }
     return Nson(Map()).setMessage(-1, 'null');
   }
+
   Future<http.Response> postRaw (String api, {Map header, Map body}) async {
     var url = '$baseUrl$api';
     App.log (url);
@@ -261,19 +269,31 @@ class ApiService {
     Map<String, String> headers =  {"Content-Type": "application/json",
       "Host" :host,
       "Content-Length": jbody.length.toString(),
-      "Authorization": "Bearer  "+await App.getSetting("auth")
+      "Authorization": "Bearer  "+ await App.getSetting("auth")
     };
-    var response = await http.post(url,
+    var response = await http.post(Uri.parse(url),
         headers: headers,
         body: jbody
     );
 
     //App.log (json.encode(headers));
     //App.log (jbody);
-
-
     return response;
   }
+
+  Future<http.Response> getRes(String url) =>
+    //Uri uri = Uri.parse('$baseUrl$url');
+    //Uri newUri = uri.replace(queryParameters: nson.asMap());
+    http.get(Uri.parse('$baseUrl$url'),
+      //headers: ,
+    ) // Make HTTP-GET request
+        .then((http.Response response) {
+      // Convert response body to JSON object
+      return response;
+      //}
+    });
+
+
   /*Future<http.Response> postRaw2 (String api, {Map body}) async {
     HttpClient client = new HttpClient();
 
@@ -313,7 +333,7 @@ class ApiService {
       "Authorization": "Bearer  "+ await App.getSetting("auth")
     };
 
-    var response = await http.get(url + '?' + jbody,
+    var response = await http.get(Uri.parse(url + '?' + jbody),
         headers:headers
     );
     App.log (jbody);
@@ -323,7 +343,7 @@ class ApiService {
 
   Future<String> login() async {
     //final response = await client.get("$baseUrl/api/profile");
-    var response = await http.post("$baseUrl/api/profile", body: {'name': 'doodle', 'color': 'blue'});
+    var response = await http.post(Uri.parse("$baseUrl/api/profile"), body: {'name': 'doodle', 'color': 'blue'});
     String email = await App.getSetting("email");
     print("wwemail");
     print(email);
@@ -343,50 +363,56 @@ class ApiService {
   Future<http.Response> loginMobile(String email, String password) async {
       var response = await postRaw("/api/auth/loginMobile", body: {'email': email, 'password': password, "remember_me": false});
       return response;
-
     }
 
-  Future<http.Response> validasiOtpMobile( String kodeOtp) async {
-    String userId =  '1608';//await App.getSetting("email");
+  Future<http.Response> validasiOtpMobile( String kodeOtp, userId) async {
     var response = await postRaw("/api/registrasi/validasiOtpMobile", body: {'userId': userId, 'kodeOtp': kodeOtp});
     return response;
 
   }
-  Future<http.Response> ResendOtp(   ) async {
-
-    String userId =  '1557';//await App.getSetting("email");
-    String email =   await App.getSetting("email");
+  Future<http.Response> ResendOtp(String _name, _phone, _userId, _email) async {
+    //String userId =  '1557';//await App.getSetting("email");
+    //String email =   await App.getSetting("email");
     var response = await postRaw("/api/registrasi/ResendOtp", body: {
       'tokenType': "Register",
-      'phone': "+6285218203618",
-      'namalengkap': "Baihaki Al Biruni",
-      'userId': userId,
-      'email': email});
+      'phone': _phone,
+      'namalengkap': _name,
+      'userId': _userId,
+      'email': _email});
     return response;
 
   }
 
-  Future<http.Response> tipeusaha( )  async {
+  Future<http.Response> tipeusaha( ) async {
     String userId =  '1608';//await App.getSetting("email");
-    var response = await getRaw("/registrasi/tipeusaha", body : {} );
+    var response = await getRes("/api/registrasi/tipeusahamobile");
+    print(response.body);
     return response;
-
   }
   Future<http.Response> Propinsi( )  async {
     String userId =  '1608';//await App.getSetting("email");
-    var response = await getRaw("/registrasi/Propinsi", body : {} );
+    var response = await getRes("/api/registrasi/Propinsi");
     return response;
   }
-  Future<http.Response> Kabupaten(String province_code )  async {
-    var response = await postRaw("/registrasi/Kabupaten", body : {'province_code':province_code} );
+  Future<http.Response> Kabupaten({int province_code} )  async {
+    var response = await postRaw("/api/registrasi/Kabupaten", body : {'province_code':province_code} );
     return response;
   }
-  Future<http.Response> Kecamatan(String city )  async {
-    var response = await postRaw("/registrasi/Kecamatan", body : {'city':city} );
+  Future<http.Response> Kecamatan({String city})  async {
+    var response = await postRaw("/api/registrasi/Kecamatan", body : {'city':city} );
     return response;
   }
-  Future<http.Response> Kelurahan(String city , String sub_district)  async {
-    var response = await postRaw("/registrasi/Kelurahan", body : {'city':city, 'sub_district':sub_district} );
+  Future<http.Response> Kelurahan({String city, String sub_district})  async {
+    var response = await postRaw("/api/registrasi/Kelurahan", body : {'city':city, 'sub_district':sub_district} );
+    return response;
+  }
+  // /api/filter/merek
+  Future<http.Response> filterMerk()  async {
+    var response = await postRaw("/api/filter/merek");
+    return response;
+  }
+  Future<http.Response> filterGrade()  async {
+    var response = await postRaw("/api/filter/grade");
     return response;
   }
 
@@ -403,7 +429,7 @@ class ApiService {
     var response = await postRaw("auth/changePasswordForgot", body: {'email': email, 'newpassword':imageFilePath });
 
     String url = 'api' + '/api/account';
-    http.Response za = await http.post(Uri.encodeFull(url), headers: {
+    http.Response za = await http.post(Uri.parse(url), headers: {
       "Accept": "application/json",
       "Cookie": "MYCOOKIE=" + 'sessionCookie2' + "; MYTOKENS=" + 'sessionCookie3',
       "Content-type": "multipart/form-data",

@@ -18,6 +18,8 @@ class ProfileRiwayat extends StatefulWidget {
   _ProfileRiwayatState createState() => _ProfileRiwayatState();
 }
 
+
+
 class _ProfileRiwayatState extends State<ProfileRiwayat> {
   String _valGender;String title;
 

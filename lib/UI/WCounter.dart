@@ -70,21 +70,19 @@ class WCounterState extends State<WCounter>   with WidgetsBindingObserver {
           n.set("Minutes", twoDigits(duration.inMinutes.abs().remainder(60)));
           n.set("Seconds", twoDigits(duration.inSeconds.abs().remainder(60)));
 
-
           return Container(child:  widget.builds(value, n));
         } on Exception catch (_) {
           return Container(child:  widget.builds("", Nson.newObject()));
         }
-
-
     }
   }
   String twoDigits(int n) => n.abs().toString().padLeft(2, "0");
   String _val(Duration duration) {
     //String twoDigits(int n) => n.abs().toString().padLeft(2, "0");
     String days = duration.inDays.abs().toString();
+    String twoDigitHours = twoDigits( duration.inHours.abs().remainder(60));
     String twoDigitMinutes = twoDigits( duration.inMinutes.abs().remainder(60));
     String twoDigitSeconds = twoDigits( duration.inSeconds.abs().remainder(60));
-    return "${days} Hari ${twoDigits(duration.inHours.abs())} Jam $twoDigitMinutes Menit $twoDigitSeconds Detik";
+    return "${days} Hari $twoDigitHours Jam $twoDigitMinutes Menit $twoDigitSeconds Detik";
   }
 }

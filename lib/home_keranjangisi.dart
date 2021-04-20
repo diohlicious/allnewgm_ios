@@ -125,12 +125,12 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                         ),
                       ),
                       actions: <Widget>[
-                        _ListSpinner("Waktu penawaran: Cepat ke Lama", () { sort("NO"); }),
-                        _ListSpinner("Waktu penawaran: Lama ke Cepat", () { sort("ON"); }),
-                        _ListSpinner("Abjad lokasi warehouse: A ➜ Z", () { sort("AZ"); }),
-                        _ListSpinner("Abjad lokasi warehouse: Z ➜ A", () { sort("ZA"); }),
-                        _ListSpinner("Bottom price: Terendah ke Tertinggi ", () { sort("LH"); }),
-                        _ListSpinner("Bottom price: Tertinggi ke Terendah ", () { sort("HL"); }),
+                        _ListSpinner("Waktu penawaran: Cepat ke Lama", () { }),
+                        _ListSpinner("Waktu penawaran: Lama ke Cepat", () { }),
+                        _ListSpinner("Abjad lokasi warehouse: A ➜ Z", () { }),
+                        _ListSpinner("Abjad lokasi warehouse: Z ➜ A", () { }),
+                        _ListSpinner("Bottom price: Terendah ke Tertinggi ", () { }),
+                        _ListSpinner("Bottom price: Tertinggi ke Terendah ", () { }),
 
                       ],
                       /*cancelButton: CupertinoActionSheetAction(
@@ -159,39 +159,6 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
       ),
     );
   }
-
-  void sort(String text)async {
-    App.log("sort");
-    var comp ;
-    if (text == 'NO'||text == 'ON') {
-      comp = (a, b) {
-        Nson na = Nson(text == 'NO' ? a : b);
-        Nson nb = Nson(text == 'NO' ? b : a);
-        return na.get("vehicle_name").asString().compareTo(nb.get("vehicle_name").asString());
-      };
-    }else if (text == 'AZ'||text == 'ZA'){
-      comp = (a, b) {
-        Nson na = Nson(text == 'AZ' ? a : b);
-        Nson nb = Nson(text == 'AZ' ? b : a);
-        return na.get("vehicle_name").asString().compareTo(nb.get("vehicle_name").asString());
-      };
-    }else if (text == 'HL'||text == 'LH'){
-      App.log(text);
-      comp = (a, b) {
-        Nson na = Nson(text == 'LH' ? a : b);
-        Nson nb = Nson(text == 'LH' ? b : a);
-        return na.get("bottom_price").asDouble().compareTo(nb.get("bottom_price").asDouble());
-      };
-    }else{
-      comp = (a,b)=>0;
-    }
-
-    nPolupate.sort(comp);
-    setState(() {
-
-    });
-  }
-
   Widget _ListSpinner(String text, VoidCallback callback){
     return  CupertinoActionSheetAction(
       child: Text(
@@ -203,8 +170,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
         , ),
       isDefaultAction: true,
       onPressed: () {
-        callback();
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
       },
     );
   }

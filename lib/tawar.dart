@@ -49,6 +49,7 @@ class _TawarState extends State<Tawar> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     /*SystemChrome.setPreferredOrientations([
@@ -72,6 +73,7 @@ class _TawarState extends State<Tawar> {
       tawarText.text = App.formatCurrency(args.get("bottom_price").asDouble());
     }
     fetchBidder(arguments['populate']);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -750,7 +752,7 @@ class _TawarState extends State<Tawar> {
                             ),
                           ),
                         ),
-                        dismissOnTouchOutside: false)
+                        dismissOnTouchOutside: true)
                     .show();
               },
               child: new Container(

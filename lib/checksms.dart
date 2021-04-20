@@ -161,14 +161,6 @@ class _CheckSMSState extends State<CheckSMS> {
         SizedBox(
           height: ScreenUtil.getInstance().setHeight(50),
         ),
-
-
-
-
-
-
-
-
       ],
     );
   }

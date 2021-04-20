@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'Nikita/Nson.dart';
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -17,8 +18,11 @@ class AndaBerhasil extends StatefulWidget {
 
 class _AndaBerhasilState extends State<AndaBerhasil> {
 
+
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    Nson daftarNson = arguments["daftarNson"];
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -93,7 +97,7 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
               padding: EdgeInsets.only(),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/selamat');;
+                  Navigator.of(context).pushNamed('/selamat', arguments: daftarNson);
                 },
                 child: new Container(
                   width: 100.0,

@@ -6,6 +6,9 @@ import 'dart:io';
 import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'Api/apiservice.dart';
+import 'Nikita/Nson.dart';
+import 'Nikita/app.dart';
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -16,9 +19,47 @@ class Selamat extends StatefulWidget {
 }
 
 class _SelamatState extends State<Selamat> {
+  String myEmail;
+  String myPassword;
+  
+  void _onNext()async{
+    App.showBusy(context);
+    ApiService apiService = ApiService();
+
+    //var response = await apiService.loginMasuk("baihakitanjung12@gmail.com", "123456789") ;
+    var response = await apiService.loginMobile(myEmail, myPassword) ;
+    
+    await App.setSetting("email", myEmail);
+    Nson nson = await apiService.getNson(response);
+    App.log (nson.toJson());
+
+    Navigator.pop(context); //pop dialog
+    if (response.statusCode == 200) {
+      //berhasil disini
+      App.setSetting("sign","true");
+      App.setSetting("auth",    nson.get('data').get('token').asString());
+      App.setSetting("userid",  nson.get('data').get('logged_in_user').get('user').get('id').asString());
+      App.setSetting("profile", nson.toJson());
+
+
+      App.log (nson.toStream());
+      Navigator.of(context).pop();
+      Navigator.of(context).pushNamed('/home');
+    }else{
+
+      App.showDialogBox(context,   nson.get("error").asString(),'' ,  onClick: () async{
+        Navigator.of(context).pop();
+      });
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    Nson daftarNson = arguments["daftarNson"];
+    myEmail = daftarNson.get('email').asString();
+    myPassword = daftarNson.get('password').asString();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -107,8 +148,9 @@ class _SelamatState extends State<Selamat> {
               padding: EdgeInsets.only(),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/home');
-                  Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                  _onNext();
+                  //Navigator.of(context).pushNamed('/home');
+                  //Navigator.of(context).popUntil(ModalRoute.withName('/home'));
 
                 },
                 child: new Container(

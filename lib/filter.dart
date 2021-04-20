@@ -1,5 +1,4 @@
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grosir/Api/apiservice.dart';
@@ -12,35 +11,118 @@ import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:grosir/Nikita/app.dart';
+
 class Filter extends StatefulWidget {
   @override
   _FilterState createState() => _FilterState();
 }
 
-
-
 class _FilterState extends State<Filter> {
   TextEditingController kisaranAwal = TextEditingController();
   TextEditingController kisaranAkhir = TextEditingController();
   RangeValues _currentRangeValues = RangeValues(0, 1000000000);
+  Nson merkNson = Nson.newArray();
+  Nson lokasiNson = Nson.newArray();
+  Nson tahunNson = Nson.newArray();
+  Nson gradeNson = Nson.newArray();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    kisaranAwal.text = App.formatCurrency(_currentRangeValues.start.roundToDouble());
-    kisaranAkhir.text = App.formatCurrency(_currentRangeValues.end.roundToDouble());
+    kisaranAwal.text =
+        App.formatCurrency(_currentRangeValues.start.roundToDouble());
+    kisaranAkhir.text =
+        App.formatCurrency(_currentRangeValues.end.roundToDouble());
     App.log("initStateFilter");
     _reload();
+    this._onLoad();
   }
+
+  _onLoad() async {
+    ApiService apiService = ApiService();
+    var responseMerk = await apiService.filterMerk();
+    merkNson = await apiService.getNson(responseMerk);
+    print('ini merkNson' + merkNson.asString());
+    var responseLokasi = await apiService.filterMerk();
+    lokasiNson = await apiService.getNson(responseLokasi);
+    var responseTahun = await apiService.filterMerk();
+    tahunNson = await apiService.getNson(responseTahun);
+    var responseGrade = await apiService.filterMerk();
+    gradeNson = await apiService.getNson(responseGrade);
+  }
+
   Nson nfilter = Nson.newObject();
 
-  void _reload()async {
+  _picker(String id, {Nson val}) {
+    print('ok');
+    var _value;
+    List _listGender = val.get('data').asList();
+    List<Widget> _listWidget = [];
+    _listGender.forEach((value) {
+      _listWidget.add(Text(value["merek"]));
+    });
+    _value = _listGender[0]["merek"];
+    print(_value);
+    var _controller = TextEditingController();
+    showModalBottomSheet(
+        backgroundColor: Colors.white.withOpacity(0),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 280,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
+                )),
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(10),
+                  child: Row(children: [
+                    Spacer(),
+                    GestureDetector(
+                        onTap: () {
+                          print(_value);
+                          Navigator.pop(context);
+                        },
+                        child: Text('Confirm',
+                            style: TextStyle(color: Color(0xff95c12c)))),
+                    SizedBox(
+                      width: 38,
+                    ),
+                  ]),
+                ),
+                Container(
+                  height: 200,
+                  child: CupertinoPicker(
+                    diameterRatio: 10,
+                    useMagnifier: false,
+                    backgroundColor: Colors.white.withOpacity(0),
+                    onSelectedItemChanged: (value) {
+                      setState(() {
+                        //_value = value;
+                        print(value);
+                        _value = _listGender[value]['merek'].toString();
+                        _controller.text = value.toString();
+                      });
+                    },
+                    itemExtent: 32.0,
+                    children: _listWidget,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
 
+  void _reload() async {
     String filter = await App.getSetting("filter");
     nfilter = Nson.parseJson(filter);
-    
-   /* Nson args = Nson.newObject();
+
+    /* Nson args = Nson.newObject();
     args.set("page", 1);
     args.set("max", 1);
     args.set("category", 'live');
@@ -55,45 +137,50 @@ class _FilterState extends State<Filter> {
     //Nson nson = await ApiService.get().l(args) ;
     //nsonLive = nson.get("data").get("data_live");
 
+    _currentRangeValues = RangeValues(
+        nfilter.get("hargastart").asDouble(),
+        nfilter.containsKey("hargaend")
+            ? nfilter.get("hargaend").asDouble()
+            : 1000000000);
+    kisaranAwal.text =
+        App.formatCurrency(_currentRangeValues.start.roundToDouble());
+    kisaranAkhir.text =
+        App.formatCurrency(_currentRangeValues.end.roundToDouble());
 
-    _currentRangeValues = RangeValues(nfilter.get("hargastart").asDouble(), nfilter.containsKey("hargaend")?  nfilter.get("hargaend").asDouble() :  1000000000);
-    kisaranAwal.text = App.formatCurrency(_currentRangeValues.start.roundToDouble());
-    kisaranAkhir.text = App.formatCurrency(_currentRangeValues.end.roundToDouble());
-
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   void _hapus() async {
     await App.delSetting("filter");
     _reload();
-
   }
 
   void _filterNow() async {
-      //save
+    //save
     Nson args = Nson.newObject();
     args.set("page", 1);
     args.set("max", 1);
     args.set("category", 'live');
-    args.set("lokasi",  "");
-    args.set("tahunstart",  1000);
-    args.set("tahunend",    3000);
+    args.set("lokasi", "");
+    args.set("tahunstart", 1000);
+    args.set("tahunend", 3000);
     args.set("merek", "");
-    args.set("hargastart",  _currentRangeValues.start.round());
-    args.set("hargaend",  _currentRangeValues.end.round());
+    args.set("hargastart", _currentRangeValues.start.round());
+    args.set("hargaend", _currentRangeValues.end.round());
 
     await App.setSetting("filter", args.toJson());
     Nson res = Nson.newObject();
     Navigator.pop(context, res);
   }
 
-  static Future<Nson> showFilter(BuildContext context)async{
+  static Future<Nson> showFilter(BuildContext context) async {
     final result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Filter()),
+      context,
+      MaterialPageRoute(builder: (context) => Filter()),
     );
-    return result is Nson? result : Nson.newObject();
+    return result is Nson ? result : Nson.newObject();
   }
+
   @override
   Widget build(BuildContext context) {
     /*SystemChrome.setPreferredOrientations([
@@ -106,15 +193,12 @@ class _FilterState extends State<Filter> {
     ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
       ..init(context);*/
 
-
-
     return Scaffold(
       appBar: AppBar(
-        title: Text( "Filter",
+        title: Text(
+          "Filter",
           style: TextStyle(
-              fontWeight: FontWeight.w800,
-              color: Colors.black,
-              fontSize: 28),
+              fontWeight: FontWeight.w800, color: Colors.black, fontSize: 28),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -131,32 +215,30 @@ class _FilterState extends State<Filter> {
         actions: <Widget>[
           FlatButton(
             child: Text("Hapus"),
-            onPressed: ()   {
+            onPressed: () {
               _hapus();
             },
           )
         ],
       ),
-
       resizeToAvoidBottomInset: false,
-      body:
-      SingleChildScrollView(child:
-      Column(
-        children: <Widget>[
-          SizedBox(
-            height: (10),
-          ),
-          Container(
-              child: Padding(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child:  _content(context),)
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: (10),
+            ),
+            Container(
+                child: Padding(
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              child: _content(context),
+            )),
+          ],
+        ),
       ),
-      ) ,
       bottomSheet: Container(
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.all(20) ,
+        margin: EdgeInsets.all(20),
         child: Padding(
           padding: EdgeInsets.only(),
           child: InkWell(
@@ -174,131 +256,143 @@ class _FilterState extends State<Filter> {
                     color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
                 borderRadius: new BorderRadius.circular(10.0),
               ),
-              child: new Center(child: new
-              Text('Filter',
-                style: new TextStyle(fontWeight: FontWeight.w500,
-                    fontSize: 18.0,
-                    color: Colors.white),),),
+              child: new Center(
+                child: new Text(
+                  'Filter',
+                  style: new TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.0,
+                      color: Colors.white),
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
-
-
   }
-  Widget
-  textViewFilter(context, String text, String val){
 
+  Widget textViewFilter(context, String text, String val) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center ,//Center Row contents horizontally,
-      crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
+      mainAxisAlignment: MainAxisAlignment.center,
+      //Center Row contents horizontally,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      //Center Row contents vertically,
       children: [
         Container(
-          width: MediaQuery.of(context).size.width/2 - 20,
-          child:  Text(
-              text, textAlign: TextAlign.left, style:
-          TextStyle(
-              color: Colors.black45,
-              fontWeight: FontWeight.w500,
-              fontSize: 20)),
+          width: MediaQuery.of(context).size.width / 2 - 30,
+          child: Text(text,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                  color: Colors.black45,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20)),
         ),
-
         Container(
-          width: MediaQuery.of(context).size.width/2 -30,
-          child:  Text(
-              val, textAlign: TextAlign.right, style:
-          TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.black45,
-              fontSize: 20)),
+          width: MediaQuery.of(context).size.width / 2 - 30,
+          child: Text(val,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black45,
+                  fontSize: 20)),
         ),
-
         Icon(
           Icons.navigate_next,
           color: Colors.black54,
         ),
-
-      ],)  ;
+      ],
+    );
   }
-
 
   Widget _content(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-
-
         SizedBox(
           height: (80),
         ),
-
-        textViewFilter(context, "Merek", nfilter.get("merek").asString()),
-        SizedBox(  height:20, ),
+        //viewpage
+        GestureDetector(
+            onTap: () {
+              _picker('merek', val: merkNson);
+            },
+            child: textViewFilter(
+                context, "Merek", nfilter.get("merek").asString())),
+        SizedBox(
+          height: 20,
+        ),
         textViewFilter(context, "Lokasi", nfilter.get("lokasi").asString()),
-        SizedBox(  height:20, ),
+        SizedBox(
+          height: 20,
+        ),
 
-        Text(
-            "Kisaran Harga", textAlign: TextAlign.left, style:
-        TextStyle(
-            color: Colors.black45,
-            fontWeight: FontWeight.w500,
-            fontSize: 20)),
-        SizedBox(  height:10, ),
+        Text("Kisaran Harga",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                color: Colors.black45,
+                fontWeight: FontWeight.w500,
+                fontSize: 20)),
+        SizedBox(
+          height: 10,
+        ),
         Container(
-          margin: EdgeInsets.all( 5),
+          margin: EdgeInsets.all(5),
           child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: TextField(
-                enabled: false,
-                textAlign: TextAlign.right,
-                keyboardType: TextInputType.number,
-                style: TextStyle(
-                    fontSize: 18, color: Theme.of(context).accentColor),
-                controller: kisaranAwal,
-                decoration:  InputDecoration(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 3,
+                child: TextField(
+                  enabled: false,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(
+                      fontSize: 18, color: Theme.of(context).accentColor),
+                  controller: kisaranAwal,
+                  decoration: InputDecoration(
                     border: new OutlineInputBorder(
-
                       borderRadius: const BorderRadius.all(
-                          const Radius.circular(10.0),
+                        const Radius.circular(10.0),
                       ),
                     ),
                     filled: false,
                     hintStyle: new TextStyle(color: Colors.grey[800]),
                     hintText: "Rp.",
-                   /* fillColor: Colors.white70*/),
-
-                obscureText: false,   ),
-            ),
-            const SizedBox(width: 5,),
-            Expanded(
-              flex: 3,
-              child: TextField(
-                enabled: false,
-                textAlign: TextAlign.right,
-                keyboardType: TextInputType.number,
-                style: TextStyle(
-                    fontSize: 18, color: Theme.of(context).accentColor),
-                controller: kisaranAkhir,
-                decoration:   InputDecoration(
-                  border: new OutlineInputBorder(
-
-                    borderRadius: const BorderRadius.all(
-                      const Radius.circular(10.0),
-                    ),
+                    /* fillColor: Colors.white70*/
                   ),
-                  filled: false,
-                  hintStyle: new TextStyle(color: Colors.grey[800]),
-                  hintText: "Rp.",
-                  /* fillColor: Colors.white70*/),
-                obscureText: false,
+                  obscureText: false,
+                ),
               ),
-            ),
-          ],
-        ),),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                flex: 3,
+                child: TextField(
+                  enabled: false,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(
+                      fontSize: 18, color: Theme.of(context).accentColor),
+                  controller: kisaranAkhir,
+                  decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                    filled: false,
+                    hintStyle: new TextStyle(color: Colors.grey[800]),
+                    hintText: "Rp.",
+                    /* fillColor: Colors.white70*/
+                  ),
+                  obscureText: false,
+                ),
+              ),
+            ],
+          ),
+        ),
 
         //RangeWidget() ,
 
@@ -314,29 +408,30 @@ class _FilterState extends State<Filter> {
           onChanged: (RangeValues values) {
             setState(() {
               _currentRangeValues = values;
-              kisaranAwal.text = App.formatCurrency(_currentRangeValues.start.roundToDouble());
-              kisaranAkhir.text = App.formatCurrency(_currentRangeValues.end.roundToDouble());
+              kisaranAwal.text =
+                  App.formatCurrency(_currentRangeValues.start.roundToDouble());
+              kisaranAkhir.text =
+                  App.formatCurrency(_currentRangeValues.end.roundToDouble());
             });
           },
         ),
-        SizedBox(  height:20, ),
+        SizedBox(
+          height: 20,
+        ),
         textViewFilter(context, "Tahun", nfilter.get("tahun").asString()),
-        SizedBox(  height:20, ),
+        SizedBox(
+          height: 20,
+        ),
         textViewFilter(context, "Grade", nfilter.get("grade").asString()),
 
         SizedBox(
           height: 100,
         ),
-
-
       ],
     );
   }
 
-
-
-  Widget horizontalLine() =>
-      Padding(
+  Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
           width: ScreenUtil.getInstance().setWidth(120),
@@ -374,69 +469,44 @@ class _FilterState extends State<Filter> {
         ),
       ),
       decoration: BoxDecoration(
-        //            color: Colors.grey.withOpacity(0.4),
+          //            color: Colors.grey.withOpacity(0.4),
           border: Border(
               bottom: BorderSide(
-                width: 2.0,
-                color: Colors.black,
-              ))),
+        width: 2.0,
+        color: Colors.black,
+      ))),
     );
   }
 }
 
-
-
 class CustomTextStyle {
   static TextStyle formField(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle title(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white);
   }
 
   static TextStyle subTitle(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle button(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 20, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle body(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 }
 
-
 class RangeWidget extends StatefulWidget {
-
-
   @override
   State<StatefulWidget> createState() => _RangeWidget();
 }
@@ -466,7 +536,6 @@ class _RangeWidget extends State<RangeWidget> {
           onChanged: (RangeValues values) {
             setState(() {
               _currentRangeValues = values;
-
             });
           },
         )

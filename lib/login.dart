@@ -110,8 +110,6 @@ class _LoginState extends State<Login> {
     App.log (myEmail.text);
     App.log (response.body);
 
-
-
     await App.setSetting("email", myEmail.text);
     Nson nson = await apiService.getNson(response);
     App.log (nson.toJson());
