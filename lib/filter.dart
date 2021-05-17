@@ -20,11 +20,15 @@ class Filter extends StatefulWidget {
 class _FilterState extends State<Filter> {
   TextEditingController kisaranAwal = TextEditingController();
   TextEditingController kisaranAkhir = TextEditingController();
+  TextEditingController tahunAwal = TextEditingController();
+  TextEditingController tahunAkhir = TextEditingController();
   RangeValues _currentRangeValues = RangeValues(0, 1000000000);
   Nson merkNson = Nson.newArray();
   Nson lokasiNson = Nson.newArray();
   Nson tahunNson = Nson.newArray();
   Nson gradeNson = Nson.newArray();
+  double _year = DateTime.now().year.toDouble();
+  RangeValues _currentRangeYear = RangeValues(1995, 2020);
 
   @override
   void initState() {
@@ -33,6 +37,10 @@ class _FilterState extends State<Filter> {
         App.formatCurrency(_currentRangeValues.start.roundToDouble());
     kisaranAkhir.text =
         App.formatCurrency(_currentRangeValues.end.roundToDouble());
+    tahunAwal.text =
+        _currentRangeYear.start.toStringAsFixed(0);
+    tahunAkhir.text =
+        _currentRangeYear.end.toStringAsFixed(0);
     App.log("initStateFilter");
     _reload();
     this._onLoad();
@@ -42,28 +50,42 @@ class _FilterState extends State<Filter> {
     ApiService apiService = ApiService();
     var responseMerk = await apiService.filterMerk();
     merkNson = await apiService.getNson(responseMerk);
-    print('ini merkNson' + merkNson.asString());
-    var responseLokasi = await apiService.filterMerk();
+
+    var responseLokasi = await apiService.filterWarehouse();
     lokasiNson = await apiService.getNson(responseLokasi);
-    var responseTahun = await apiService.filterMerk();
-    tahunNson = await apiService.getNson(responseTahun);
-    var responseGrade = await apiService.filterMerk();
+
+    //var responseTahun = await apiService.();
+    //tahunNson = await apiService.getNson(responseTahun);
+
+    for (var i = 1995; i <= _year; i++) {
+      Nson _nson = Nson.newObject();
+      _nson.set('tahun', i);
+      tahunNson.add(_nson);
+    }
+    print(tahunNson.asString());
+    var responseGrade = await apiService.filterGrade();
     gradeNson = await apiService.getNson(responseGrade);
   }
 
   Nson nfilter = Nson.newObject();
 
+  _filterName(String id) {
+    switch (id) {
+      case 'merek':
+        return;
+    }
+  }
+
   _picker(String id, {Nson val}) {
-    print('ok');
+    print('ok ' + val.asString());
     var _value;
-    List _listGender = val.get('data').asList();
+    List _listGender = val.asList();
     List<Widget> _listWidget = [];
     _listGender.forEach((value) {
-      _listWidget.add(Text(value["merek"]));
+      _listWidget.add(Text(value[id]));
     });
-    _value = _listGender[0]["merek"];
-    print(_value);
-    var _controller = TextEditingController();
+    _value = _listGender[0][id];
+    //var _controller = TextEditingController();
     showModalBottomSheet(
         backgroundColor: Colors.white.withOpacity(0),
         context: context,
@@ -84,7 +106,11 @@ class _FilterState extends State<Filter> {
                     Spacer(),
                     GestureDetector(
                         onTap: () {
-                          print(_value);
+                          setState(() {
+                            print(_value);
+                            nfilter.set(id == 'name' ? 'lokasi' : id, _value);
+                          });
+                          print(nfilter.get(id).asString());
                           Navigator.pop(context);
                         },
                         child: Text('Confirm',
@@ -103,9 +129,10 @@ class _FilterState extends State<Filter> {
                     onSelectedItemChanged: (value) {
                       setState(() {
                         //_value = value;
+                        //_filterName(id);
                         print(value);
-                        _value = _listGender[value]['merek'].toString();
-                        _controller.text = value.toString();
+                        _value = _listGender[value][id].toString();
+                        //_controller.text = value.toString();
                       });
                     },
                     itemExtent: 32.0,
@@ -128,7 +155,7 @@ class _FilterState extends State<Filter> {
     args.set("category", 'live');
     args.set("lokasi", nfilter.get("lokasi").asString());
     args.set("tahunstart",  nfilter.containsKey("tahunstart")?  nfilter.get("tahunstart").asInteger() : 2000);
-    args.set("tahunend",    nfilter.containsKey("tahunend")?  nfilter.get("tahunend").asInteger() : 3000);
+    args.set("tahunend", nfilter.containsKey("tahunend")?  nfilter.get("tahunend").asInteger() : 3000);
     args.set("merek", nfilter.get("merek").asString());
     args.set("hargastart", nfilter.get("hargastart").asInteger());
     args.set("hargaend", nfilter.containsKey("hargaend")?  nfilter.get("hargaend").asInteger() :  1000000000);
@@ -159,12 +186,12 @@ class _FilterState extends State<Filter> {
     //save
     Nson args = Nson.newObject();
     args.set("page", 1);
-    args.set("max", 1);
+    args.set("max", 10);
     args.set("category", 'live');
-    args.set("lokasi", "");
-    args.set("tahunstart", 1000);
-    args.set("tahunend", 3000);
-    args.set("merek", "");
+    args.set("lokasi", nfilter.get("lokasi").asString());
+    args.set("tahunstart", tahunAwal.text);
+    args.set("tahunend", tahunAkhir.text);
+    args.set("merek", nfilter.get("merek").asString());
     args.set("hargastart", _currentRangeValues.start.round());
     args.set("hargaend", _currentRangeValues.end.round());
 
@@ -295,7 +322,7 @@ class _FilterState extends State<Filter> {
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.black45,
-                  fontSize: 20)),
+                  fontSize: 16)),
         ),
         Icon(
           Icons.navigate_next,
@@ -306,6 +333,7 @@ class _FilterState extends State<Filter> {
   }
 
   Widget _content(context) {
+    //textviewfilter
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -315,18 +343,22 @@ class _FilterState extends State<Filter> {
         //viewpage
         GestureDetector(
             onTap: () {
-              _picker('merek', val: merkNson);
+              _picker('merek', val: merkNson.get('data'));
             },
             child: textViewFilter(
                 context, "Merek", nfilter.get("merek").asString())),
         SizedBox(
           height: 20,
         ),
-        textViewFilter(context, "Lokasi", nfilter.get("lokasi").asString()),
+        GestureDetector(
+            onTap: () {
+              _picker('name', val: lokasiNson.get('data'));
+            },
+            child: textViewFilter(
+                context, "Lokasi", nfilter.get("lokasi").asString())),
         SizedBox(
           height: 20,
         ),
-
         Text("Kisaran Harga",
             textAlign: TextAlign.left,
             style: TextStyle(
@@ -393,7 +425,6 @@ class _FilterState extends State<Filter> {
             ],
           ),
         ),
-
         //RangeWidget() ,
 
         RangeSlider(
@@ -415,14 +446,108 @@ class _FilterState extends State<Filter> {
             });
           },
         ),
+        //----------------------------------------------Kisaran Tahun
+        Text("Kisaran Tahun",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                color: Colors.black45,
+                fontWeight: FontWeight.w500,
+                fontSize: 20)),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          margin: EdgeInsets.all(5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 3,
+                child: TextField(
+                  enabled: false,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(
+                      fontSize: 18, color: Theme.of(context).accentColor),
+                  controller: tahunAwal,
+                  decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                    filled: false,
+                    hintStyle: new TextStyle(color: Colors.grey[800]),
+                    hintText: "Tahun",
+                    /* fillColor: Colors.white70*/
+                  ),
+                  obscureText: false,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                flex: 3,
+                child: TextField(
+                  enabled: false,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(
+                      fontSize: 18, color: Theme.of(context).accentColor),
+                  controller: tahunAkhir,
+                  decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                    filled: false,
+                    hintStyle: new TextStyle(color: Colors.grey[800]),
+                    hintText: "Tahun",
+                    /* fillColor: Colors.white70*/
+                  ),
+                  obscureText: false,
+                ),
+              ),
+            ],
+          ),
+        ),
+        //RangeWidget() ,
+
+        RangeSlider(
+          values: _currentRangeYear,
+          min: 1995,
+          max: 2020,
+          divisions: 100,
+          labels: RangeLabels(
+            _currentRangeYear.start.roundToDouble().toStringAsFixed(0),
+            _currentRangeYear.end.roundToDouble().toStringAsFixed(0),
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _currentRangeYear = values;
+              tahunAwal.text =
+                  _currentRangeYear.start.roundToDouble().toStringAsFixed(0);
+              tahunAkhir.text =
+                  _currentRangeYear.end.roundToDouble().toStringAsFixed(0);
+            });
+          },
+        ),
+        //----------------------------------------------Kisaran Tahun
+        /*GestureDetector(
+            onTap: _picker('tahun', val: tahunNson),
+            child: textViewFilter(
+                context, "Tahun", nfilter.get("tahun").asString())),*/
         SizedBox(
           height: 20,
         ),
-        textViewFilter(context, "Tahun", nfilter.get("tahun").asString()),
-        SizedBox(
-          height: 20,
-        ),
-        textViewFilter(context, "Grade", nfilter.get("grade").asString()),
+        GestureDetector(
+            onTap: () {
+              _picker('grade', val: gradeNson.get('data'));
+            },
+            child: textViewFilter(
+                context, "Grade", nfilter.get("grade").asString())),
 
         SizedBox(
           height: 100,

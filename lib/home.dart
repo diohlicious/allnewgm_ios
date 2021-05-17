@@ -8,6 +8,7 @@ import 'package:grosir/Nikita/app.dart';
 import 'package:grosir/UI/WCounter.dart';
 import 'package:grosir/home_keranjangisi.dart';
 import 'package:intl/intl.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:page_view_indicators/circle_page_indicator.dart';
 
 import 'home_info.dart';
@@ -26,6 +27,8 @@ class _HomeState extends State<Home> {
   Nson nsonAkan = Nson.newArray();
 
   Nson nsonRiwayat = Nson.newArray();
+  Nson nsonData = Nson.newObject();
+  int pageNo = 1;
 
   String compare = "";
   int lead = 0;
@@ -49,6 +52,7 @@ class _HomeState extends State<Home> {
 
   void initState() {
     super.initState();
+    //scrollController = new ScrollController()..addListener(_scrollListener);
     /*  () async {
         _refreshIndicatorKey.currentState?.show();
     };*/
@@ -63,6 +67,32 @@ class _HomeState extends State<Home> {
       keepPage: false,
       viewportFraction: 1,
     );
+  }
+
+  @override
+  void dispose() {
+    //scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    print(scrollController.position.extentAfter);
+    if (scrollController.position.extentAfter < 500) {
+      setState(() {
+        pageNo += 1;
+        _reload();
+        print('data habis+loadmore()');
+        //items.addAll(new List.generate(42, (index) => 'Inserted $index'));
+      });
+    }
+  }
+
+  loadMore() {
+    setState(() {
+      pageNo += 1;
+      _reload();
+    });
+    print('data habis+loadmore()');
   }
 
   TextEditingController search = TextEditingController();
@@ -200,14 +230,11 @@ class _HomeState extends State<Home> {
     );
   }*/
   Future<Nson> _reload() async {
-    const int max = 25;
+    const int max = 250;
     //statuscode":302 dan 401 dipaksa relogin
-
     String filter = await App.getSetting("filter");
     Nson nfilter = Nson.parseJson(filter);
-
     //live
-    Nson args = Nson.newObject();
     args.set("page", 1);
     args.set("max", max);
     args.set("category", 'live');
@@ -232,6 +259,7 @@ class _HomeState extends State<Home> {
             : 1000000000);
 
     Nson nson = await ApiService.get().homeLiveApi(args);
+    nsonData = nson.get('data');
     nsonLive = nson.get("data").get("data_live");
     /* nson.get("data").remove("data_live");
     String s = nson.toJson();
@@ -242,7 +270,7 @@ class _HomeState extends State<Home> {
 
     //ominsoon
     args = Nson.newObject();
-    args.set("page", 1);
+    args.set("page", pageNo);
     args.set("max", max);
     args.set("category", 'akan tayang');
     args.set("lokasi", '');
@@ -258,7 +286,7 @@ class _HomeState extends State<Home> {
 
     //hstory
     args = Nson.newObject();
-    args.set("page", 1);
+    args.set("page", pageNo);
     args.set("max", max);
     args.set("Ismenang", '');
 
@@ -436,240 +464,243 @@ class _HomeState extends State<Home> {
     return RefreshIndicator(
       onRefresh: refreshData,
       child: SingleChildScrollView(
-          padding: _currentIndex == 2
-              ? EdgeInsets.all(0)
-              : EdgeInsets.only(left: 10, right: 10),
-          child: Column(
-            children: [
-              (_currentIndex == 0 && _currentGalery <= 1)
-                  ? Column(
-                      children: [
-                        SizedBox(
-                          height: 86,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 5),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: TextField(
-                              obscureText: false,
-                              style: TextStyle(
-                                  color: Theme.of(context).accentColor),
-                              controller: search,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.search,
-                              onSubmitted: (search) {
-                                App.log("onSubmitted" + search);
-                                searchFilter(search);
-                              },
-                              decoration: InputDecoration(
-                                //Add th Hint text here.
-                                labelText: "Kendaraan yang sedang anda cari?",
+        //controller: scrollController,
+        padding: _currentIndex == 2
+            ? EdgeInsets.all(0)
+            : EdgeInsets.only(left: 10, right: 10),
+        child: Column(
+          children: [
+            (_currentIndex == 0 && _currentGalery <= 1)
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: 86,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 5),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: TextField(
+                            obscureText: false,
+                            style:
+                                TextStyle(color: Theme.of(context).accentColor),
+                            controller: search,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (search) {
+                              App.log("onSubmitted" + search);
+                              searchFilter(search);
+                            },
+                            decoration: InputDecoration(
+                              //Add th Hint text here.
+                              labelText: "Kendaraan yang sedang anda cari?",
 
-                                hintStyle: CustomTextStyle.formField(context),
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 1.0)),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 1.0)),
-                                prefixIcon: const Icon(
-                                  Icons.search,
-                                  color: Colors.black,
-                                ),
-
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(100),
+                              hintStyle: CustomTextStyle.formField(context),
+                              enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
-                                    width: 120,
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                                filled: true,
-                                contentPadding: EdgeInsets.all(5),
+                                      color: Theme.of(context).accentColor,
+                                      width: 1.0)),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).accentColor,
+                                      width: 1.0)),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Colors.black,
                               ),
+
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(100),
+                                borderSide: BorderSide(
+                                  width: 120,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              filled: true,
+                              contentPadding: EdgeInsets.all(5),
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 0,
-                        ),
-                        Container(
-                          height: 230,
-                          child: PageView.builder(
-                              onPageChanged: (value) {
-                                setState(() {
-                                  slideIndex = value;
-                                  _currentPageNotifier.value = value;
-                                });
-                              },
-                              controller: _pageController,
-                              itemBuilder: (context, index) => _carouselBuilder(
-                                  index,
-                                  _pageController,
-                                  Stack(
-                                    children: [
-                                      Align(
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          margin: const EdgeInsets.only(
-                                              left: 0.0, right: 0.0),
-                                          child: Image.asset(
-                                            "assets/images/header.png",
-                                            fit: BoxFit.fill,
-                                          ),
-                                          /*decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: ExactAssetImage("assets/images/header.png"),
                       ),
-                    ),*/
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Container(
+                        height: 230,
+                        child: PageView.builder(
+                            onPageChanged: (value) {
+                              setState(() {
+                                slideIndex = value;
+                                _currentPageNotifier.value = value;
+                              });
+                            },
+                            controller: _pageController,
+                            itemBuilder: (context, index) => _carouselBuilder(
+                                index,
+                                _pageController,
+                                Stack(
+                                  children: [
+                                    Align(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        margin: const EdgeInsets.only(
+                                            left: 0.0, right: 0.0),
+                                        child: Image.asset(
+                                          "assets/images/header.png",
+                                          fit: BoxFit.fill,
+                                        ),
+                                        /*decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: ExactAssetImage("assets/images/header.png"),
+                  ),
+                ),*/
+                                      ),
+                                    ),
+                                    /*Positioned( left: 0, bottom: 0 , child: _buildCircleIndicator()),*/
+                                  ],
+                                ))),
+                      ),
+                      _currentGalery == 0
+                          ? _Buton(
+                              "Ada ${nsonData.get('total').asInteger()} kendaraan Live! ",
+                              Color.fromARGB(255, 230, 36, 44),
+                              Colors.white,
+                              null)
+                          : Container(),
+                      _currentGalery == 1
+                          ? _Buton(
+                              "Ada ${nsonAkan.size()} kendaraan segera tayang! ",
+                              Color.fromARGB(255, 255, 222, 89),
+                              Colors.black,
+                              null)
+                          : Container(),
+                    ],
+                  )
+                : Container(),
+            _currentIndex == 0 ? _galeryButton(_currentGalery) : Container(),
+            _currentIndex == 0
+                ? Column(children: [
+                    Stack(children: [
+                      Text(
+                        _currentGalery == 0
+                            ? "Baru Masuk"
+                            : _currentGalery == 1
+                                ? "Segera Tayang"
+                                : "Record",
+                        style: new TextStyle(
+                            fontFamily: "Nunito",
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22.0,
+                            color: Colors.black),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                _currentGalery == 2
+                                    ? Container()
+                                    : Container(
+                                        margin: EdgeInsets.only(right: 10),
+                                        child: InkWell(
+                                          child: Image.asset(
+                                              'assets/images/filter.png'),
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .pushNamed('/filter')
+                                                .then((value)=>print(value));
+                                          },
                                         ),
                                       ),
-                                      /*Positioned( left: 0, bottom: 0 , child: _buildCircleIndicator()),*/
-                                    ],
-                                  ))),
-                        ),
-                        _currentGalery == 0
-                            ? _Buton(
-                                "Ada ${nsonLive.size()} kendaraan Live! ",
-                                Color.fromARGB(255, 230, 36, 44),
-                                Colors.white,
-                                null)
-                            : Container(),
-                        _currentGalery == 1
-                            ? _Buton(
-                                "Ada ${nsonAkan.size()} kendaraan segera tayang! ",
-                                Color.fromARGB(255, 255, 222, 89),
-                                Colors.black,
-                                null)
-                            : Container(),
-                      ],
-                    )
-                  : Container(),
-              _currentIndex == 0 ? _galeryButton(_currentGalery) : Container(),
-              _currentIndex == 0
-                  ? Column(children: [
-                      Stack(children: [
-                        Text(
-                          _currentGalery == 0
-                              ? "Baru Masuk"
-                              : _currentGalery == 1
-                                  ? "Segera Tayang"
-                                  : "Record",
-                          style: new TextStyle(
-                              fontFamily: "Nunito",
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22.0,
-                              color: Colors.black),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  _currentGalery == 2
-                                      ? Container()
-                                      : Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          child: InkWell(
-                                            child: Image.asset(
-                                                'assets/images/filter.png'),
-                                            onTap: () {
-                                              Navigator.of(context)
-                                                  .pushNamed('/filter');
-                                            },
+                                Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: InkWell(
+                                    onTap: () {
+                                      final action = CupertinoActionSheet(
+                                        title: Text(
+                                          "Sortir berdasarkan",
+                                          style: TextStyle(
+                                            fontFamily: "Nunito",
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 20,
+                                            color: Colors.black,
                                           ),
                                         ),
-                                  Container(
-                                    margin: EdgeInsets.only(right: 10),
-                                    child: InkWell(
-                                      onTap: () {
-                                        final action = CupertinoActionSheet(
-                                          title: Text(
-                                            "Sortir berdasarkan",
-                                            style: TextStyle(
-                                              fontFamily: "Nunito",
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 20,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          actions: <Widget>[
-                                            _ListSpinner(
-                                                "Waktu penawaran: Cepat ke Lama",
-                                                () {
-                                              sort("NO");
-                                            }),
-                                            _ListSpinner(
-                                                "Waktu penawaran: Lama ke Cepat",
-                                                () {
-                                              sort("ON");
-                                            }),
-                                            _ListSpinner(
-                                                "Abjad lokasi warehouse: A ➜ Z",
-                                                () {
-                                              sort("AZ");
-                                            }),
-                                            _ListSpinner(
-                                                "Abjad lokasi warehouse: Z ➜ A",
-                                                () {
-                                              sort("ZA");
-                                            }),
-                                            _ListSpinner(
-                                                "Bottom price: Terendah ke Tertinggi ",
-                                                () {
-                                              sort("LH");
-                                            }),
-                                            _ListSpinner(
-                                                "Bottom price: Tertinggi ke Terendah ",
-                                                () {
-                                              sort("HL");
-                                            }),
-                                          ],
-                                          /*cancelButton: CupertinoActionSheetAction(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),*/
-                                        );
-                                        showCupertinoModalPopup(
-                                            context: context,
-                                            builder: (context) => action);
-                                        //Navigator.of(context).pushNamed('/filter');
-                                      },
-                                      child:
-                                          Image.asset('assets/images/sort.png'),
-                                    ),
+                                        actions: <Widget>[
+                                          _ListSpinner(
+                                              "Waktu penawaran: Cepat ke Lama",
+                                              () {
+                                            sort("NO");
+                                          }),
+                                          _ListSpinner(
+                                              "Waktu penawaran: Lama ke Cepat",
+                                              () {
+                                            sort("ON");
+                                          }),
+                                          _ListSpinner(
+                                              "Abjad lokasi warehouse: A ➜ Z",
+                                              () {
+                                            sort("AZ");
+                                          }),
+                                          _ListSpinner(
+                                              "Abjad lokasi warehouse: Z ➜ A",
+                                              () {
+                                            sort("ZA");
+                                          }),
+                                          _ListSpinner(
+                                              "Bottom price: Terendah ke Tertinggi ",
+                                              () {
+                                            sort("LH");
+                                          }),
+                                          _ListSpinner(
+                                              "Bottom price: Tertinggi ke Terendah ",
+                                              () {
+                                            sort("HL");
+                                          }),
+                                        ],
+                                        /*cancelButton: CupertinoActionSheetAction(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),*/
+                                      );
+                                      showCupertinoModalPopup(
+                                          context: context,
+                                          builder: (context) => action);
+                                      //Navigator.of(context).pushNamed('/filter');
+                                    },
+                                    child:
+                                        Image.asset('assets/images/sort.png'),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ]),
-                    ])
-                  : Container(),
-              _currentIndex == 0
-                  ? (_currentGalery == 0
-                      ? GaleryHome(context)
-                      : (_currentGalery == 1
-                          ? GaleryAkanTayang(context)
-                          : GaleryRecord(context)))
-                  : _currentIndex == 1
-                      ? GaleryKeranjangIsi(context)
-                      : _currentIndex == 2
-                          ? GaleryInfo(context)
-                          : GaleryMenang(context),
-            ],
-          )),
+                      ),
+                    ]),
+                  ])
+                : Container(),
+            _currentIndex == 0
+                ? (_currentGalery == 0
+                    ? GaleryHome(context)
+                    : (_currentGalery == 1
+                        ? GaleryAkanTayang(context)
+                        : GaleryRecord(context)))
+                : _currentIndex == 1
+                    ? GaleryKeranjangIsi(context)
+                    : _currentIndex == 2
+                        ? GaleryInfo(context)
+                        : GaleryMenang(context),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1126,6 +1157,8 @@ class _HomeState extends State<Home> {
     return formatted;
   }
 
+  ScrollController scrollController;
+
   Widget _galery(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1144,7 +1177,7 @@ class _HomeState extends State<Home> {
                       App.log('nextDetail ' + index.toString());
                       /*Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      MaterialPageRoute(phys
                         builder: (context) => Detail(),
                       ),
                     );*/
@@ -1179,8 +1212,7 @@ class _HomeState extends State<Home> {
                                     ),*/
                                     margin: const EdgeInsets.only(
                                         left: 0.0, right: 0.0),
-                                    child:
-                                     ClipRRect(
+                                    child: ClipRRect(
                                       borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(15),
                                           bottomLeft: Radius.circular(15)),
@@ -1393,7 +1425,7 @@ class _HomeState extends State<Home> {
                                               ),
                                               Text(
                                                 'Rp.' +
-                                                    App.formatCurrency(nsonAkan
+                                                    App.formatCurrency(nsonLive
                                                         .getIn(index)
                                                         .get("adminfee")
                                                         .asDouble()),

@@ -45,6 +45,7 @@ dependencies:
   geocoder: ^0.2.1
   camera: ^0.8.1
   native_device_orientation: ^1.0.0
+  lazy_load_scrollview: ^1.3.0
   # camera_camera: ^2.0.1
   image_picker: ^0.7.4
   path: ^1.6.4
