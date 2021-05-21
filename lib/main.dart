@@ -36,9 +36,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   NsGlobal.title = "Wakakakak";
+  //title
   NsGlobal.init();
-  runApp( MyApp() );
-
+  runApp(MyApp());
 
   App.settingpreff = await SharedPreferences.getInstance();
 }
@@ -47,22 +47,20 @@ class MyApp extends StatelessWidget {
   Future<String> prepare() async {
     String status = await App.getSetting("sign");
     String lewati = await App.getSetting("lewati");
-    if(status == 'true'){
+    if (status == 'true') {
       return 'login';
-    } else if(lewati == 'true'){
+    } else if (lewati == 'true') {
       return 'lewati';
-    }else{
+    } else {
       return '';
     }
-
   }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
-
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Grosir Mobil',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -76,34 +74,31 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFF95c12c),
         accentColor: Color(0xFF95c12c),
         textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Color(0xFF95c12c),
-            selectionColor: Color(0xFF95c12c),
-            selectionHandleColor: Color(0xFF95c12c),
+          cursorColor: Color(0xFF95c12c),
+          selectionColor: Color(0xFF95c12c),
+          selectionHandleColor: Color(0xFF95c12c),
         ),
-
 
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home:
-          FutureBuilder<String>(
+      home: FutureBuilder<String>(
           future: prepare(), // a previously-obtained Future<String> or null
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot){
-            if (snapshot.hasData||snapshot.hasError) {
-              if (snapshot.data == 'login'){
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData || snapshot.hasError) {
+              if (snapshot.data == 'login') {
                 return Splash();
-              }else if (snapshot.data == 'lewati'){
+              } else if (snapshot.data == 'lewati') {
                 return Splash();
-              }else{
+              } else {
                 return Splash();
               }
-            }else{
+            } else {
               return Splash();
             }
-          }
-      ) ,
+          }),
       debugShowCheckedModeBanner: false,
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
@@ -135,74 +130,71 @@ class MyApp extends StatelessWidget {
         '/lokasiunit': (context) => LokasiUnit(),
         '/take': (context) => TakePictureScreen(),
         '/display': (context) => DisplayPictureScreen(),
-        '/viewer': (context) => ImageViewer( ),
+        '/viewer': (context) => ImageViewer(),
       },
     );
   }
 }
-//  Navigator.pushNamed(context, MaterialPageRoute(builder: (_) => Screen2()));
+
+// Navigator.pushNamed(context, MaterialPageRoute(builder: (_) => Screen2()));
 
 class Splash extends StatelessWidget {
   Future<String> _calculation = Future<String>.delayed(
     Duration(seconds: 3),
-        () => 'Data Loaded',
+    () => 'Data Loaded',
   );
 
   Future<String> prepare() async {
     await Future<String>.delayed(
       Duration(seconds: 1),
-          () => 'Data Loaded',
+      () => 'Data Loaded',
     );
 
     String status = await App.getSetting("sign");
     String lewati = await App.getSetting("lewati");
-    if(status == 'true'){
+    if (status == 'true') {
       return 'login';
-    } else if(lewati == 'true'){
+    } else if (lewati == 'true') {
       return 'lewati';
-    }else{
+    } else {
       return '';
     }
-
   }
+
   @override
   Widget build(BuildContext context) {
-   /* return Scaffold(
+    /* return Scaffold(
         body: Welcome()
 
     );*/
     return Scaffold(
-      body:
-      FutureBuilder<String>(
-        future: prepare(), // a previously-obtained Future<String> or null
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot){
-          if (snapshot.hasData||snapshot.hasError) {
-              if (snapshot.data == 'login'){
-                return Home();
-              }else if (snapshot.data == 'login'){
-                return Login();
-              }else{
-                return Welcome();
+        body: FutureBuilder<String>(
+            future: prepare(), // a previously-obtained Future<String> or null
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData || snapshot.hasError) {
+                if (snapshot.data == 'login') {
+                  return Home();
+                } else if (snapshot.data == 'login') {
+                  return Login();
+                } else {
+                  return Welcome();
+                }
+              } else {
+                return UIsplash();
               }
-          }else{
-              return UIsplash();
-          }
-        }
-      )
-    );
+            }));
   }
 }
 
-class UIsplash extends StatelessWidget{
-
+class UIsplash extends StatelessWidget {
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       child: Stack(
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-              // gradient: LinearGradient(colors: [info, primary])
+                // gradient: LinearGradient(colors: [info, primary])
                 image: DecorationImage(
                     image: AssetImage("assets/images/bg1.png"),
                     fit: BoxFit.cover)),
@@ -223,14 +215,12 @@ class UIsplash extends StatelessWidget{
               ),
             ),
           ),
-
           Container(
-            child:  SingleChildScrollView(
-              child:
-              Column(
+            child: SingleChildScrollView(
+              child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: ( MediaQuery.of(context).size.height / 2 - 80).abs(),
+                    height: (MediaQuery.of(context).size.height / 2 - 80).abs(),
                   ),
                   Container(
                     alignment: Alignment.center,
@@ -250,6 +240,7 @@ class UIsplash extends StatelessWidget{
     );
   }
 }
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 

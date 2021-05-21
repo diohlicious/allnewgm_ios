@@ -19,10 +19,6 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="GMob"
         android:icon="@mipmap/ic_launcher">
-
-
-
-
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBCtrIQrZ_pM8_IHvbpeQGKwWJF0RoI1Sg"/>
         <activity

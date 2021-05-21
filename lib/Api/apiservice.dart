@@ -98,6 +98,11 @@ class ApiService {
     return getNson(response);
   }
 
+  Future<http.Response> homeLiveApiRaw(Nson nArgs) async {
+    var response = await postRaw("/api/Live/HomeMobile", body: nArgs.asMap());
+    return response;
+  }
+
   Future<Nson> homeLiveApi(Nson nArgs) async {
     var response = await postRaw("/api/Live/HomeMobile", body: nArgs.asMap());
     return getNson(response);
@@ -225,6 +230,11 @@ class ApiService {
     return getNson(response);
   }
 
+  Future<Nson> checkMaintenanceApi() async {
+    var response = await postRaw("/api/auth/checkMaintenance");
+    return getNson(response);
+  }
+
   Future<Nson> tipeUsahaApi(Nson nArgs) async {
     var response = await getRaw("/api/registrasi/tipeusahamobile");
     return getNson(response);
@@ -301,12 +311,12 @@ class ApiService {
   Future<http.Response> postRaw(String api, {Map header, Map body}) async {
     var url = '$baseUrl$api';
     App.log(url);
-
     //encode Map to JSON
     var jbody = json.encode(body);
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Host": host,
+      "Accept":"application/json",
       "Content-Length": jbody.length.toString(),
       "Authorization": "Bearer  " + await App.getSetting("auth")
     };

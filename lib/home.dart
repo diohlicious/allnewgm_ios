@@ -56,6 +56,7 @@ class _HomeState extends State<Home> {
     /*  () async {
         _refreshIndicatorKey.currentState?.show();
     };*/
+    refreshData();
 
     App.getSetting("profile").then((value) => handleValue(value));
     mySLides.add(Nson.newObject());
@@ -230,78 +231,96 @@ class _HomeState extends State<Home> {
     );
   }*/
   Future<Nson> _reload() async {
-    const int max = 250;
-    //statuscode":302 dan 401 dipaksa relogin
-    String filter = await App.getSetting("filter");
-    Nson nfilter = Nson.parseJson(filter);
-    //live
-    args.set("page", 1);
-    args.set("max", max);
-    args.set("category", 'live');
-    args.set("grade", '');
-    args.set("lokasi", nfilter.get("lokasi").asString());
-    args.set(
-        "tahunstart",
-        nfilter.containsKey("tahunstart")
-            ? nfilter.get("tahunstart").asInteger()
-            : 2000);
-    args.set(
-        "tahunend",
-        nfilter.containsKey("tahunend")
-            ? nfilter.get("tahunend").asInteger()
-            : 3000);
-    args.set("merek", nfilter.get("merek").asString());
-    args.set("hargastart", nfilter.get("hargastart").asInteger());
-    args.set(
-        "hargaend",
-        nfilter.containsKey("hargaend")
-            ? nfilter.get("hargaend").asInteger()
-            : 1000000000);
+    //maintenance
+    Nson mtNson = await ApiService().checkMaintenanceApi();
+    if (mtNson.get('is_mobile').asInteger() == 1) {
+      const int max = 100;
+      //statuscode":302 dan 401 dipaksa relogin
+      String filter = await App.getSetting("filter");
+      Nson nfilter = Nson.parseJson(filter);
+      //live
 
-    Nson nson = await ApiService.get().homeLiveApi(args);
-    nsonData = nson.get('data');
-    nsonLive = nson.get("data").get("data_live");
-    /* nson.get("data").remove("data_live");
+      args = Nson.newObject();
+      args.set("page", 1);
+      args.set("max", max);
+      args.set("category", 'live');
+      args.set("grade", '');
+      args.set("lokasi", nfilter.get("lokasi").asString());
+      args.set(
+          "tahunstart",
+          nfilter.containsKey("tahunstart")
+              ? nfilter.get("tahunstart").asInteger()
+              : 2000);
+      args.set(
+          "tahunend",
+          nfilter.containsKey("tahunend")
+              ? nfilter.get("tahunend").asInteger()
+              : 3000);
+      args.set("merek", nfilter.get("merek").asString());
+      args.set("hargastart", nfilter.get("hargastart").asInteger());
+      args.set(
+          "hargaend",
+          nfilter.containsKey("hargaend")
+              ? nfilter.get("hargaend").asInteger()
+              : 1000000000);
+
+      var response = await ApiService.get().homeLiveApiRaw(args);
+      if(response.statusCode==401){
+        App.showDialogBox(context, 'Message!', 'Session Habis', onClick: () async{
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+        });
+      }
+
+      print('here is Status Code: ${response.statusCode}');
+
+      Nson nson = await ApiService.get().homeLiveApi(args);
+      print('here home live api ${args.asString()}');
+      nsonData = nson.get('data');
+      nsonLive = nson.get("data").get("data_live");
+
+      /* nson.get("data").remove("data_live");
     String s = nson.toJson();
     */
-    App.log(args.toStream());
-    nson.get("data").remove("data_live");
-    App.log(nson.toStream());
+      App.log(args.toStream());
+      nson.get("data").remove("data_live");
+      App.log(nson.toStream());
 
-    //ominsoon
-    args = Nson.newObject();
-    args.set("page", pageNo);
-    args.set("max", max);
-    args.set("category", 'akan tayang');
-    args.set("lokasi", '');
-    args.set("tahunstart", 2000);
-    args.set("tahunend", 3000);
-    args.set("merek", '');
-    args.set("hargastart", 0);
-    args.set("grade", '');
-    args.set("hargaend", 1000000000);
-    nson = await ApiService.get().homeComingSoonApi(args);
-    nsonAkan = nson.get("data").get("data_list_event");
-    App.log(nson.toStream());
+      //ominsoon
+      args = Nson.newObject();
+      args.set("page", pageNo);
+      args.set("max", max);
+      args.set("category", 'akan tayang');
+      args.set("lokasi", '');
+      args.set("tahunstart", 2000);
+      args.set("tahunend", 3000);
+      args.set("merek", '');
+      args.set("hargastart", 0);
+      args.set("grade", '');
+      args.set("hargaend", 1000000000);
+      nson = await ApiService.get().homeComingSoonApi(args);
 
-    //hstory
-    args = Nson.newObject();
-    args.set("page", pageNo);
-    args.set("max", max);
-    args.set("Ismenang", '');
+      nsonAkan = nson.get("data").get("data_list_event");
+      App.log(nson.toStream());
 
-    nson = await ApiService.get().homeHistoryApi(args);
-    nsonRiwayat = nson.get("data").get("data_history");
-    //App.log(nson.toStream());
+      //hstory
+      args = Nson.newObject();
+      args.set("page", pageNo);
+      args.set("max", max);
+      args.set("Ismenang", '');
 
-    nson = await ApiService.get().timeServerApi(args);
-    //App.log(nson.get("data").get("time_server").asString());
-    lead = App.wcounterlead(nson
-        .get("data")
-        .get("time_server")
-        .asString()); // App.datedif ( nson.get("data").get("time_server").asString(), compare);
+      nson = await ApiService.get().homeHistoryApi(args);
+      nsonRiwayat = nson.get("data").get("data_history");
+      //App.log(nson.toStream());
 
-    /*compare =  DateTime.now().toString();
+      nson = await ApiService.get().timeServerApi(args);
+      //App.log(nson.get("data").get("time_server").asString());
+      lead = App.wcounterlead(nson
+          .get("data")
+          .get("time_server")
+          .asString()); // App.datedif ( nson.get("data").get("time_server").asString(), compare);
+
+      /*compare =  DateTime.now().toString();
     App.log(compare);
     App.log("++++++++");
     int i =  App.datedif ( nson.get("data").get("time_server").asString(), compare);
@@ -322,7 +341,19 @@ class _HomeState extends State<Home> {
     now = Duration(seconds: dif+i);
     App.log(now.toString());*/
 
-    //setState(() { });
+      //setState(() { });
+
+    }else{
+      App.showDialogBox(context,   mtNson.get("description").asString(),'' ,  onClick: () async{
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      });
+    } /*else {
+      App.showDialogBox(context,   mtNson.get("description").asString(),'' ,  onClick: () async{
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      });
+    }*/
     return Nson.newObject();
   }
 
@@ -473,9 +504,9 @@ class _HomeState extends State<Home> {
             (_currentIndex == 0 && _currentGalery <= 1)
                 ? Column(
                     children: [
-                      SizedBox(
+                      /*SizedBox(
                         height: 86,
-                      ),
+                      ),*/
                       Container(
                         margin: EdgeInsets.only(bottom: 5),
                         child: Padding(
@@ -582,7 +613,8 @@ class _HomeState extends State<Home> {
                 : Container(),
             _currentIndex == 0 ? _galeryButton(_currentGalery) : Container(),
             _currentIndex == 0
-                ? Column(children: [
+                ? Column(
+                children: [
                     Stack(children: [
                       Text(
                         _currentGalery == 0
@@ -613,7 +645,7 @@ class _HomeState extends State<Home> {
                                           onTap: () {
                                             Navigator.of(context)
                                                 .pushNamed('/filter')
-                                                .then((value)=>print(value));
+                                                .then((value) => refreshData());
                                           },
                                         ),
                                       ),
@@ -720,7 +752,9 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
+      extendBody: true,
+      backgroundColor: Colors.white.withOpacity(0.3),
       appBar: _currentIndex == 2
           ? null
           : AppBar(
@@ -1405,7 +1439,7 @@ class _HomeState extends State<Home> {
                                                             nsonLive
                                                                 .getIn(index)
                                                                 .get(
-                                                                    "open_price")
+                                                                    "PriceNow")
                                                                 .asDouble()),
                                                     style: const TextStyle(
                                                         fontWeight:
@@ -1432,7 +1466,7 @@ class _HomeState extends State<Home> {
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.w500,
                                                     fontFamily: "Nunito",
-                                                    fontSize: 16.0),
+                                                    fontSize: 18.0),
                                               ),
                                               WCounter(
                                                 builds: (value, duration) =>
@@ -1785,7 +1819,7 @@ class _HomeState extends State<Home> {
                                               'Rp.' +
                                                   App.formatCurrency(nsonAkan
                                                       .getIn(index)
-                                                      .get("open_price")
+                                                      .get("PriceNow")
                                                       .asDouble()),
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.w500,
@@ -1880,7 +1914,7 @@ class _HomeState extends State<Home> {
                                               ),
                                               start: nsonAkan
                                                   .getIn(index)
-                                                  .get("end_date")
+                                                  .get("start_date")
                                                   .asString(),
                                               lead: lead,
                                             ),

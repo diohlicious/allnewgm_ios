@@ -98,7 +98,8 @@ class _LoginState extends State<Login> {
     //baihakitanjung12@gmail.com
       myEmail.text = 'baihakitanjung12@gmail.com';
       myEmail.text = 'rkrzmail@gmail.com';
-      myPassword.text = '12345678';
+      myEmail.text = 'sunu@studioh.id';
+      myPassword.text = '123456789';
 
   }
   void  _onLoading() async {
@@ -117,24 +118,26 @@ class _LoginState extends State<Login> {
     Navigator.pop(context); //pop dialog
     if (response.statusCode == 200) {
       //berhasil disini
-      App.setSetting("sign","true");
-      App.setSetting("auth",    nson.get('data').get('token').asString());
-      App.setSetting("userid",  nson.get('data').get('logged_in_user').get('user').get('id').asString());
-      App.setSetting("profile", nson.toJson());
-
-
-      App.log (nson.toStream());
-      Navigator.of(context).pop();
-      Navigator.of(context).pushNamed('/home');
+      if(nson.get('message').asString() == 'error'){
+        App.showDialogBox(context,   nson.get("description").asString(),'' ,  onClick: () async{
+          Navigator.of(context).pop();
+        });
+      } else {
+        App.setSetting("sign","true");
+        App.setSetting("auth",    nson.get('data').get('token').asString());
+        App.setSetting("userid",  nson.get('data').get('logged_in_user').get('user').get('id').asString());
+        App.setSetting("profile", nson.toJson());
+        print("ini auth yang ada ${App.getSetting("auth")}");
+        App.log (nson.toStream());
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed('/home');
+      }
     }else{
-
       App.showDialogBox(context,   nson.get("error").asString(),'' ,  onClick: () async{
         Navigator.of(context).pop();
       });
     }
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +153,7 @@ class _LoginState extends State<Login> {
     return
       MaterialApp(
 
-        title: 'Flutter Demo',
+        title: 'Grosir Mobil',
         theme: ThemeData(
           // This is the theme of your application.
           //
@@ -178,7 +181,6 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.only(top: 5.0),
                       child:  Column(
                         children: <Widget>[
-
                           Container(
                             alignment: Alignment.center,
                             height: 120,
@@ -194,7 +196,6 @@ class _LoginState extends State<Login> {
                   width: 200,
                   height: 130,
                 ),
-
 
                 SizedBox(
                   height: ScreenUtil.getInstance().setHeight(10),
@@ -260,13 +261,10 @@ class _LoginState extends State<Login> {
 
                 ],)
             ],),),
-
-
         ),
 
         debugShowCheckedModeBanner: false,
       );
-
   }
 
   Widget _showSignIn(context) {
