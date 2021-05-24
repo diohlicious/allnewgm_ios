@@ -11,7 +11,6 @@ import 'package:grosir/menang_bayar.dart';
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
 Widget _galeryHeader(context, {String plan, String title, String desc, Color color, Color color2} ){
   return Card(
       color: Colors.lightBlue,
@@ -31,7 +30,7 @@ Widget _galeryHeader(context, {String plan, String title, String desc, Color col
                   color,  color2
                 ]
             )
-        ) ,
+        ),
         child:  Column(
           children: [
             Align(
@@ -319,7 +318,6 @@ Widget _Buton(BuildContext context, String text, VoidCallback callback){
 
 Widget _Content(context) {
   return
-
     Container(
     padding: EdgeInsets.symmetric(horizontal: 20),
     alignment: Alignment.center,

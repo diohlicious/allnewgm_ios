@@ -21,10 +21,11 @@ class Tawar extends StatefulWidget {
 enum StepTawar { NOL, SATU, DUAL }
 
 class _TawarState extends State<Tawar> {
-  List<Widget> _listBidder=[];
+  List<Widget> _listBidder = [];
   Nson args = Nson.newObject();
   TextEditingController tawarText = TextEditingController();
   StepTawar _stepTawar = StepTawar.NOL;
+  bool _isVisible = true;
 
   @override
   void initState() {
@@ -32,23 +33,26 @@ class _TawarState extends State<Tawar> {
     super.initState();
   }
 
-  void fetchBidder(Map _nPopulate){
+  void fetchBidder(Map _nPopulate) {
     var _data = Nson(_nPopulate);
     for (var i = 0; i < _data.get("user_bid").size(); i++) {
-      var dateTime = DateTime.parse(_data.get("user_bid").getIn(i).get("date_bid").asString());
+      var dateTime = DateTime.parse(
+          _data.get("user_bid").getIn(i).get("date_bid").asString());
       setState(() {
         _listBidder.add(
           //date_bid
-          textViewTawar(context, _data.get("openhouseid").asString(),
-              App.formatCurrency(_data.get("user_bid").getIn(i).get("price_bid").asDouble()),
-              DateFormat( 'dd-MM-yyyy HH:mm').format(dateTime),
+          textViewTawar(
+              context,
+              _data.get("openhouseid").asString(),
+              App.formatCurrency(
+                  _data.get("user_bid").getIn(i).get("price_bid").asDouble()),
+              DateFormat('dd-MM-yyyy HH:mm').format(dateTime),
               //args.get("user_bid").getIn(i).get("date_bid").asString(),
-              i==0?Colors.red:Colors.black),
+              i == 0 ? Colors.red : Colors.black),
         );
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +74,9 @@ class _TawarState extends State<Tawar> {
     App.log(args.asString());
 
     if (tawarText.text == '') {
-      tawarText.text = App.formatCurrency(args.get("bottom_price").asDouble());
+      tawarText.text = App.formatCurrency(args.get("PriceNow").asDouble());
     }
     fetchBidder(arguments['populate']);
-
 
     return Scaffold(
       appBar: AppBar(
@@ -195,7 +198,7 @@ class _TawarState extends State<Tawar> {
   }
 
   void afterberhasil() {
-    Navigator.of(context).pushNamed('/home');
+    //Navigator.of(context).pushNamed('/home');
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/home', (Route<dynamic> route) => false,
         arguments: {'keranjang': true});
@@ -551,12 +554,19 @@ class _TawarState extends State<Tawar> {
                 onTap: () {
                   String s = tawarText.text.replaceAll(".", "");
                   s = s.replaceAll(",", "");
-                  double i = App.getDouble(s) -
-                      (_stepTawar == StepTawar.NOL
-                          ? 500000
-                          : (_stepTawar == StepTawar.SATU ? 1000000 : 1500000));
-                  tawarText.text = App.formatCurrency(i);
-                  setState(() {});
+                  _isVisible = true;
+                  double i = App.getDouble(s);
+                  i -= (_stepTawar == StepTawar.NOL
+                      ? 500000
+                      : (_stepTawar == StepTawar.SATU ? 1000000 : 1500000));
+                  if (i > args.get("PriceNow").asDouble()) {
+                    tawarText.text = App.formatCurrency(i);
+                    setState(() {});
+                  } else {
+                    tawarText.text =
+                        App.formatCurrency(args.get("PriceNow").asDouble());
+                    App.showError('Kembali Ke Penawaran Tertinggi');
+                  }
                 },
                 child: Icon(
                   Icons.remove_circle_outline,
@@ -570,16 +580,21 @@ class _TawarState extends State<Tawar> {
               child: Container(
                 width: MediaQuery.of(context).size.width - 100,
                 child: TextField(
-                  enabled: false,
+                  enabled: true,
+                  readOnly: true,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
                       fontSize: 20, color: Theme.of(context).accentColor),
                   controller: tawarText,
                   decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      //onPressed: () => _controller.clear(),
-                      icon: Icon(Icons.clear),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        tawarText.text =
+                            App.formatCurrency(args.get("PriceNow").asDouble());
+                        print(args.get("PriceNow").asString());
+                      },
+                      child: Icon(Icons.clear),
                     ),
                     hintStyle: CustomTextStyle.formField(context),
                     enabledBorder: UnderlineInputBorder(
@@ -599,14 +614,22 @@ class _TawarState extends State<Tawar> {
                   onTap: () {
                     String s = tawarText.text.replaceAll(".", "");
                     s = s.replaceAll(",", "");
-                    double i = App.getDouble(s) +
-                        (_stepTawar == StepTawar.NOL
-                            ? 500000
-                            : (_stepTawar == StepTawar.SATU
-                                ? 1000000
-                                : 1500000));
-                    tawarText.text = App.formatCurrency(i);
-                    setState(() {});
+                    double i = App.getDouble(s);
+                    i += (_stepTawar == StepTawar.NOL
+                        ? 500000
+                        : (_stepTawar == StepTawar.SATU ? 1000000 : 1500000));
+                    if (i < args.get("open_price").asDouble()) {
+                      tawarText.text = App.formatCurrency(i);
+                      setState(() {});
+                    } else {
+                      tawarText.text =
+                          App.formatCurrency(args.get("open_price").asDouble());
+                      App.showError(
+                          'Maximal Nego: Rp. ${App.formatCurrency(args.get("open_price").asDouble())} \n Silahkan Langsung BUY NOW');
+                      setState(() {
+                        _isVisible = false;
+                      });
+                    }
                   },
                   child: Icon(
                     Icons.add_circle_outline,
@@ -622,155 +645,160 @@ class _TawarState extends State<Tawar> {
         SizedBox(
           height: 20,
         ),
-        Container(
-          child: Padding(
-            padding: EdgeInsets.only(),
-            child: InkWell(
-              onTap: () {
-                //Navigator.of(context).pop();
-                AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.NO_HEADER,
-                        animType: AnimType.BOTTOMSLIDE,
-                        body: Column(
-                          children: [
-                            Text('Waktu Penawaran',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Nunito",
-                                    height: 1.2,
-                                    fontSize: 14)),
-                            SizedBox(height: 20),
-                            WCounter(
-                              builds: (value, duration) => Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    _timeView(duration
-                                        .get("Days")
-                                        .asString()
-                                        .substring(0, 1)),
-                                    _timeView(duration
-                                        .get("Days")
-                                        .asString()
-                                        .substring(1, 2)),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    _timeView(duration
-                                        .get("Hours")
-                                        .asString()
-                                        .substring(0, 1)),
-                                    _timeView(duration
-                                        .get("Hours")
-                                        .asString()
-                                        .substring(1, 2)),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    _timeView(duration
-                                        .get("Minutes")
-                                        .asString()
-                                        .substring(0, 1)),
-                                    _timeView(duration
-                                        .get("Minutes")
-                                        .asString()
-                                        .substring(1, 2)),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    _timeView(duration
-                                        .get("Seconds")
-                                        .asString()
-                                        .substring(0, 1)),
-                                    _timeView(duration
-                                        .get("Seconds")
-                                        .asString()
-                                        .substring(1, 2)),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                  ],
+        Visibility(
+          visible: _isVisible,
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.only(),
+              child: InkWell(
+                onTap: () {
+                  //Navigator.of(context).pop();
+                  AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.NO_HEADER,
+                          animType: AnimType.BOTTOMSLIDE,
+                          body: Column(
+                            children: [
+                              Text('Waktu Penawaran',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Nunito",
+                                      height: 1.2,
+                                      fontSize: 14)),
+                              SizedBox(height: 20),
+                              WCounter(
+                                builds: (value, duration) => Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      _timeView(duration
+                                          .get("Days")
+                                          .asString()
+                                          .substring(0, 1)),
+                                      _timeView(duration
+                                          .get("Days")
+                                          .asString()
+                                          .substring(1, 2)),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      _timeView(duration
+                                          .get("Hours")
+                                          .asString()
+                                          .substring(0, 1)),
+                                      _timeView(duration
+                                          .get("Hours")
+                                          .asString()
+                                          .substring(1, 2)),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      _timeView(duration
+                                          .get("Minutes")
+                                          .asString()
+                                          .substring(0, 1)),
+                                      _timeView(duration
+                                          .get("Minutes")
+                                          .asString()
+                                          .substring(1, 2)),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      _timeView(duration
+                                          .get("Seconds")
+                                          .asString()
+                                          .substring(0, 1)),
+                                      _timeView(duration
+                                          .get("Seconds")
+                                          .asString()
+                                          .substring(1, 2)),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                start: args.get("end_date").asString(),
+                                lead: args.get("lead").asInteger(),
                               ),
-                              start: args.get("end_date").asString(),
-                              lead: args.get("lead").asInteger(),
-                            ),
-                            SizedBox(height: 20),
-                            Text('Apakah Anda ingin  menawar? ',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Nunito",
-                                    height: 1.2,
-                                    fontSize: 22)),
-                            SizedBox(height: 10),
-                            Text(
-                                args.get("vehicle_name").asString() +
-                                    '  seharga  Rp ' +
-                                    tawarText.text,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Nunito",
-                                    height: 1.5,
-                                    fontSize: 14,
-                                    color: Color.fromARGB(255, 143, 143, 143)))
-                          ],
-                        ),
-                        btnOk: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(),
-                            child: InkWell(
-                              onTap: () {
-                                tawar(args);
-                              },
-                              child: new Container(
-                                width: 100.0,
-                                height: 50.0,
-                                decoration: new BoxDecoration(
-                                  color: Colors.blue,
-                                  border: new Border.all(
-                                      color: Colors.blue, width: 1.0),
-                                  borderRadius: new BorderRadius.circular(10.0),
-                                ),
-                                child: new Center(
-                                  child: new Text(
-                                    'Tawar',
-                                    style: new TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18.0,
-                                        color: Colors.white),
+                              SizedBox(height: 20),
+                              Text('Apakah Anda ingin  menawar? ',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Nunito",
+                                      height: 1.2,
+                                      fontSize: 22)),
+                              SizedBox(height: 10),
+                              Text(
+                                  args.get("vehicle_name").asString() +
+                                      '  seharga  Rp ' +
+                                      tawarText.text,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Nunito",
+                                      height: 1.5,
+                                      fontSize: 14,
+                                      color:
+                                          Color.fromARGB(255, 143, 143, 143)))
+                            ],
+                          ),
+                          btnOk: Container(
+                            child: Padding(
+                              padding: EdgeInsets.only(),
+                              child: InkWell(
+                                onTap: () {
+                                  tawar(args);
+                                },
+                                child: new Container(
+                                  width: 100.0,
+                                  height: 50.0,
+                                  decoration: new BoxDecoration(
+                                    color: Colors.blue,
+                                    border: new Border.all(
+                                        color: Colors.blue, width: 1.0),
+                                    borderRadius:
+                                        new BorderRadius.circular(10.0),
+                                  ),
+                                  child: new Center(
+                                    child: new Text(
+                                      'Tawar',
+                                      style: new TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18.0,
+                                          color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        dismissOnTouchOutside: true)
-                    .show();
-              },
-              child: new Container(
-                width: 100.0,
-                height: 50.0,
-                decoration: new BoxDecoration(
-                  color: Color.fromARGB(255, 10, 132, 254),
-                  border: new Border.all(
-                      color: Color.fromARGB(255, 10, 132, 254), width: 1.0),
-                  borderRadius: new BorderRadius.circular(10.0),
-                ),
-                child: new Center(
-                  child: new Text(
-                    'Tawar',
-                    style: new TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                        color: Colors.white),
+                          dismissOnTouchOutside: true)
+                      .show();
+                },
+                child: new Container(
+                  width: 100.0,
+                  height: 50.0,
+                  decoration: new BoxDecoration(
+                    color: Color.fromARGB(255, 10, 132, 254),
+                    border: new Border.all(
+                        color: Color.fromARGB(255, 10, 132, 254), width: 1.0),
+                    borderRadius: new BorderRadius.circular(10.0),
+                  ),
+                  child: new Center(
+                    child: new Text(
+                      'Tawar',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -1003,14 +1031,18 @@ class _TawarState extends State<Tawar> {
                 child: Text('Bidder $text',
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        color: color, fontWeight: FontWeight.w500, fontSize: 12)),
+                        color: color,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12)),
               ),
               Container(
                 width: MediaQuery.of(context).size.width / 2 - 25,
                 child: Text(date,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        color: color, fontWeight: FontWeight.w500, fontSize: 12)),
+                        color: color,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12)),
               ),
             ],
           ),

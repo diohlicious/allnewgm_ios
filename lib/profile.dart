@@ -19,18 +19,36 @@ class Profile extends StatefulWidget {
 }
 
 
-
-
-
-
 class _ProfileState extends State<Profile> {
   Nson profile = Nson.newObject();
+
+  Nson nsonRiwayat = Nson.newArray();
+  Nson nsonMenang = Nson.newArray();
+  Nson nsonKalah = Nson.newArray();
+
+  Future onLoad() async {
+    Nson args = Nson.newObject();
+    args.set("page", 1);
+    args.set("max", 75);
+    args.set("Ismenang", '');
+    Nson nson = await ApiService.get().homeHistoryApi(args);
+    nsonRiwayat = nson.get("data").get("data_history");
+    nsonRiwayat.asList().forEach((value) {
+      if (value["mywinner"]==1){
+        nsonMenang.add(value);
+      } else {
+        nsonKalah.add(value);
+      }
+    });
+    setState(() {});
+  }
 
 
   @override
   void initState() {
       super.initState();
       App.getSetting("profile").then((value) => handleValue(value) );
+      this.onLoad();
   }
 
   void handleValue(String value){
@@ -90,8 +108,6 @@ class _ProfileState extends State<Profile> {
                 height: 60,
               ),
 
-
-
               Container(
                 child:  Row(children: [
                     Container(
@@ -138,7 +154,7 @@ class _ProfileState extends State<Profile> {
                           width: 240,
                           alignment: Alignment.centerLeft,
                           child:
-                          Text("Anda masih dalam proses verifikasi",
+                          Text("",
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontFamily: "Nunito",
@@ -208,7 +224,7 @@ class _ProfileState extends State<Profile> {
                       child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, "/profileriwayat",
-                                arguments :  {'riwayat': "Berhasil"});
+                                arguments :  {'riwayat': 'Menang', 'nsonRiwayat':nsonMenang.asList()});
                           },
                           child:
                           Container(
@@ -233,7 +249,7 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                   Image(image: ExactAssetImage("assets/images/pmenang.png")),
                                   SizedBox(width: 10,),
-                                  Text("12 Unit",
+                                  Text(nsonMenang.size().toString(),
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontFamily: "Nunito",
@@ -265,7 +281,7 @@ class _ProfileState extends State<Profile> {
                         onTap: () {
                           Navigator.pushNamed(
                               context, "/profileriwayat" ,
-                              arguments :  {'riwayat': "Kalah"});
+                              arguments :  {'riwayat': 'Kalah', 'nsonRiwayat': nsonKalah.asList()});
                         },
                         child:
 
@@ -291,7 +307,7 @@ class _ProfileState extends State<Profile> {
                               children: [
                                 Image(image: ExactAssetImage("assets/images/pkalah.png")),
                                 SizedBox(width: 10,),
-                                Text("12 Unit",
+                                Text(nsonKalah.size().toString(),
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontFamily: "Nunito",

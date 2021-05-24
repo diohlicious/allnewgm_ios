@@ -265,10 +265,11 @@ class _HomeState extends State<Home> {
               : 1000000000);
 
       var response = await ApiService.get().homeLiveApiRaw(args);
-      if(response.statusCode==401){
-        App.showDialogBox(context, 'Message!', 'Session Habis', onClick: () async{
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      if (response.statusCode == 401) {
+        App.showDialogBox(context, 'Message!', 'Session Habis',
+            onClick: () async {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/login', (Route<dynamic> route) => false);
         });
       }
 
@@ -343,12 +344,14 @@ class _HomeState extends State<Home> {
 
       //setState(() { });
 
-    }else{
-      App.showDialogBox(context,   mtNson.get("description").asString(),'' ,  onClick: () async{
+    } else {
+      App.showDialogBox(context, mtNson.get("description").asString(), '',
+          onClick: () async {
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
       });
-    } /*else {
+    }
+    /*else {
       App.showDialogBox(context,   mtNson.get("description").asString(),'' ,  onClick: () async{
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
@@ -613,8 +616,7 @@ class _HomeState extends State<Home> {
                 : Container(),
             _currentIndex == 0 ? _galeryButton(_currentGalery) : Container(),
             _currentIndex == 0
-                ? Column(
-                children: [
+                ? Column(children: [
                     Stack(children: [
                       Text(
                         _currentGalery == 0
@@ -753,8 +755,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: false,
-      extendBody: true,
-      backgroundColor: Colors.white.withOpacity(0.3),
       appBar: _currentIndex == 2
           ? null
           : AppBar(
@@ -1438,10 +1438,24 @@ class _HomeState extends State<Home> {
                                                         App.formatCurrency(
                                                             nsonLive
                                                                 .getIn(index)
-                                                                .get(
-                                                                    "PriceNow")
+                                                                .get("PriceNow")
                                                                 .asDouble()),
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
+                                                        color: nsonLive
+                                                                    .getIn(
+                                                                        index)
+                                                                    .get(
+                                                                        "PriceNow")
+                                                                    .asInteger() ==
+                                                                nsonLive
+                                                                    .getIn(
+                                                                        index)
+                                                                    .get(
+                                                                        "bottom_price")
+                                                                    .asInteger()
+                                                            ? Colors.black87
+                                                            : Colors
+                                                                .blue.shade700,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         fontFamily: "Nunito",
@@ -2014,167 +2028,187 @@ class _HomeState extends State<Home> {
             itemBuilder: (context, index) {
               return Container(
                 margin: EdgeInsets.only(bottom: 10),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.only(top: 15, right: 5),
-                                  child: CircleAvatar(
-                                    child: Text(
-                                      nsonRiwayat
-                                          .getIn(index)
-                                          .get("grade")
-                                          .asString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    backgroundColor:
-                                        Color.fromARGB(255, 148, 193, 44),
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
+                child: GestureDetector(
+                  onTap: () {
+                    nextDetail(nsonRiwayat.getIn(index));
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(top: 15, right: 5),
+                                    child: CircleAvatar(
                                       child: Text(
                                         nsonRiwayat
                                             .getIn(index)
-                                            .get("vehicle_name")
+                                            .get("grade")
                                             .asString(),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
+                                        style: TextStyle(
+                                          color: Colors.white,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 16.0,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                      margin: EdgeInsets.only(right: 30),
+                                      backgroundColor:
+                                          Color.fromARGB(255, 148, 193, 44),
                                     ),
-                                    const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 2.0)),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
                                           nsonRiwayat
                                               .getIn(index)
-                                              .get("kik_number")
+                                              .get("vehicle_name")
                                               .asString(),
+                                          overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
-                                              fontFamily: "Nunito",
-                                              color: Color.fromARGB(
-                                                  255, 143, 143, 143),
-                                              fontSize: 12.0),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          'Jakarta',
-                                          style: const TextStyle(
-                                              fontFamily: "Nunito",
-                                              color: Color.fromARGB(
-                                                  255, 230, 36, 44),
-                                              fontSize: 12.0),
-                                        )
-                                      ],
-                                    ),
-                                    const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.0)),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Stack(
-                                      children: [
-                                        Text(
-                                          'Harga Awal',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: "Nunito",
-                                              fontSize: 12.0),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Container(
-                                            child: Text(
-                                              nsonRiwayat
-                                                  .getIn(index)
-                                                  .get("status")
-                                                  .asString(),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: "Nunito",
-                                                  fontSize: 12.0),
-                                            ),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16.0,
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    Stack(
-                                      children: [
-                                        Text(
-                                          'Rp.' +
-                                              App.formatCurrency(nsonRiwayat
-                                                  .getIn(index)
-                                                  .get("hargapembukaan")
-                                                  .asDouble()),
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: "Nunito",
-                                              fontSize: 18.0),
                                         ),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Container(
-                                            child: Text(
-                                              'Rp.' +
-                                                  App.formatCurrency(nsonRiwayat
-                                                      .getIn(index)
-                                                      .get("sold_price")
-                                                      .asDouble()),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: "Nunito",
-                                                  fontSize: 18.0),
-                                            ),
+                                        margin: EdgeInsets.only(right: 30),
+                                      ),
+                                      const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 2.0)),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            nsonRiwayat
+                                                .getIn(index)
+                                                .get("kik_number")
+                                                .asString(),
+                                            style: const TextStyle(
+                                                fontFamily: "Nunito",
+                                                color: Color.fromARGB(
+                                                    255, 143, 143, 143),
+                                                fontSize: 12.0),
                                           ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ],
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            'Jakarta',
+                                            style: const TextStyle(
+                                                fontFamily: "Nunito",
+                                                color: Color.fromARGB(
+                                                    255, 230, 36, 44),
+                                                fontSize: 12.0),
+                                          )
+                                        ],
+                                      ),
+                                      const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 1.0)),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Harga Awal',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily: "Nunito",
+                                                      fontSize: 12.0),
+                                                ),
+                                                Text(
+                                                  'Rp.' +
+                                                      App.formatCurrency(
+                                                          nsonRiwayat
+                                                              .getIn(index)
+                                                              .get(
+                                                                  "hargapembukaan")
+                                                              .asDouble()),
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily: "Nunito",
+                                                      fontSize: 18.0),
+                                                ),
+                                              ]),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                          ),
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    nsonRiwayat
+                                                        .getIn(index)
+                                                        .get("status")
+                                                        .asString(),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: "Nunito",
+                                                        fontSize: 12.0),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    'Rp.' +
+                                                        App.formatCurrency(
+                                                            nsonRiwayat
+                                                                .getIn(index)
+                                                                .get(
+                                                                    "sold_price")
+                                                                .asDouble()),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: "Nunito",
+                                                        fontSize: 18.0),
+                                                  ),
+                                                )
+                                              ]),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        /* const Icon(
+                          /* const Icon(
               Icons.more_vert,
               size: 16.0,
             ),*/
-                        const SizedBox(
-                          width: 5,
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 5,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

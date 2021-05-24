@@ -109,6 +109,7 @@ class _DetailState extends State<Detail> {
       ),
     );
   }
+
   List<bool> _isOpen = [false, false, false, false, false];
 
   @override
@@ -272,15 +273,19 @@ class _DetailState extends State<Detail> {
 
   List<Widget> getChildsImage() {
     String key = 'image_broken';
-    List<Widget> children = List();
+    List<Widget> children = [];
     for (var i = 0; i < nPopulate.get(key).size(); i = i + 2) {
       children.add(imageViewOnly(
-          nPopulate.get(key).getIn(i),
-          i + 1 >= nPopulate.get(key).size()
-              ? Nson(null)
-              : nPopulate
-                  .get(key)
-                  .getIn(i + 1 < nPopulate.get(key).size() ? i + 1 : i)));
+        nPopulate.get(key).getIn(i),
+        i + 1 >= nPopulate.get(key).size()
+            ? Nson(null)
+            : nPopulate
+                .get(key)
+                .getIn(i + 1 < nPopulate.get(key).size() ? i + 1 : i),
+        nPopulate.get(key),
+        i, i + 1 < nPopulate.get(key).size() ? i + 1 : i
+
+      ));
     }
 
     return children;
@@ -390,7 +395,7 @@ class _DetailState extends State<Detail> {
           children: [
             Text(
               'Rp.' +
-                  App.formatCurrency(nPopulate.get("PriceNow").asDouble()),
+                  App.formatCurrency(nPopulate.get("bottom_price").asDouble()),
               style: const TextStyle(
                   fontFamily: "Nunito",
                   color: Colors.black,
@@ -512,8 +517,10 @@ class _DetailState extends State<Detail> {
         ),
         ExpansionPanelList(
           animationDuration: Duration(seconds: 1),
-          expansionCallback: (i, _isExpanded) =>
-              setState(() { _isOpen[i] = !_isExpanded; print(_isOpen);}),
+          expansionCallback: (i, _isExpanded) => setState(() {
+            _isOpen[i] = !_isExpanded;
+            print(_isOpen);
+          }),
           children: [
             ExpansionPanel(
               isExpanded: _isOpen[0],
@@ -715,16 +722,14 @@ class _DetailState extends State<Detail> {
     );
   }
 
-  imageViewOnly(Nson imag1, Nson imag2) {
+  imageViewOnly(Nson imag1, Nson imag2, Nson imagList, int index0, int index1) {
     Nson image1 = Nson.newObject();
     Nson image2 = Nson.newObject();
-    Nson imagList = Nson.newArray();
     image1.set("description", imag1.get("description").asString());
     image1.set("url_image", imag1.get("url_image").asString());
     image2.set("description", imag2.get("description").asString());
     image2.set("url_image", imag2.get("url_image").asString());
-    imagList.add(imag1);
-    imagList.add(imag2);
+    //imagList=imag;
     return Container(
       padding: EdgeInsets.all(5),
       child: Row(
@@ -737,8 +742,13 @@ class _DetailState extends State<Detail> {
             children: [
               InkWell(
                 onTap: () {
-                  showImage(imag1.get("description").asString(),
-                      imag1.get("url_image").asString(), imagList, 0);
+                  showImage(
+                      //imag1.get("description").asString(),
+                      //imag1.get("url_image").asString(),
+                      imagList.getIn(index0).get("description").asString(),
+                      imagList.getIn(index0).get("url_image").asString(),
+                      imagList,
+                      index0);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -763,8 +773,16 @@ class _DetailState extends State<Detail> {
                     )
                   : InkWell(
                       onTap: () {
-                        showImage(imag2.get("description").asString(),
-                            imag2.get("url_image").asString(), imagList, 1);
+                        showImage(
+                            /*imag2.get("description").asString(),
+                            imag2.get("url_image").asString()*/
+                            imagList
+                                .getIn(index1)
+                                .get("description")
+                                .asString(),
+                            imagList.getIn(index1).get("url_image").asString(),
+                            imagList,
+                            index1);
                       },
                       child: Container(
                         alignment: Alignment.center,

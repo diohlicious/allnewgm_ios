@@ -1,4 +1,3 @@
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +6,7 @@ import 'dart:io';
 import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:grosir/Nikita/Nson.dart';
 import 'package:grosir/Nikita/app.dart';
-
-
+import 'package:intl/intl.dart';
 
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
@@ -18,185 +16,171 @@ class ProfileRiwayat extends StatefulWidget {
   _ProfileRiwayatState createState() => _ProfileRiwayatState();
 }
 
-
-
 class _ProfileRiwayatState extends State<ProfileRiwayat> {
-  String _valGender;String title;
-
+  String _valGender;
+  String title;
+  String _dateNow;
+  Nson nsonRiwayat = Nson.newArray();
+  Nson args = Nson.newObject();
 
   Future refreshData() async {
-    Nson args = Nson.newObject();
-    args.set("page", 1);
-    args.set("max", 20);
-    args.set("category", 'A');
-    args.set("lokasi", '');
-    args.set("tahunstart", 2000);
-    args.set("tahunend", 3000);
-    args.set("merek", '');
-    args.set("hargastart", 0);
-    args.set("hargaend", 1000000000);
-
-    Nson nson = await ApiService.get().homeLiveApi(args) ;
-    App.log(nson.toStream());
     setState(() {});
+  }
+
+  getDate() {
+    var now = new DateTime.now();
+    var formatter = new DateFormat('dd MMMM yyyy');
+    //String formattedDate = formatter.format(now);
+    _dateNow = formatter.format(now);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getDate();
   }
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    args = Nson(arguments);
+    App.log(args.asString());
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     if (arguments != null) {
       title = arguments['riwayat'];
-    }else {
-      title ="";
-
+      nsonRiwayat = Nson(arguments['nsonRiwayat']);
+    } else {
+      title = "";
     }
 
-    return
-      MaterialApp(
-
-        title: '',
-        theme: ThemeData(
-
-          primarySwatch: Colors.green,
-
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home:
-
-        Scaffold(
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leading: InkWell(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.black54,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),),
-          body :
-          RefreshIndicator(
-              onRefresh: refreshData,
-              child:  SingleChildScrollView(child: Column(
-                children: <Widget>[
-
-                  Container(
-                    child: Padding(
-                        padding: EdgeInsets.only(top: 5.0,left: 20),
-                        child:  Text("Penawaran "+title,
-                            style: TextStyle(
-                                fontFamily: "Nunito",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 24.0,
-                                color: Colors.black))
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: 60,
-                  ),
-
-                  Container(
-                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 5),
-                    child: Stack(
-                      children: [
-                        Text(
-                          '23 Oktober 2020',
-                          style: const TextStyle(fontWeight: FontWeight.w400,fontFamily: "Nunito", fontSize: 16.0),
-                        ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-
-                            child: Text(
-                              '2 unit',
-                              style: const TextStyle(fontWeight: FontWeight.w400,fontFamily: "Nunito", fontSize: 16.0),
-                            ),
-                          ),
-                        )   ],
-                    ),),
-
-
-                  _itemView(),
-                  _itemView(),
-                  _itemView(),
-                  _itemView(),
-                  _itemView(),
-                ],
-              ),) ,
-
+    return MaterialApp(
+      title: '',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: InkWell(
+            borderRadius: BorderRadius.circular(30.0),
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.black54,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-
-
-
         ),
-        debugShowCheckedModeBanner: false,
-      );
-
+        body: RefreshIndicator(
+          onRefresh: refreshData,
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 5.0, left: 20),
+                      child: Text("Penawaran " + title,
+                          style: TextStyle(
+                              fontFamily: "Nunito",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 24.0,
+                              color: Colors.black))),
+                  width: MediaQuery.of(context).size.width,
+                  height: 60,
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10, right: 10, bottom: 5),
+                  child: Stack(
+                    children: [
+                      Text(
+                        _dateNow,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Nunito",
+                            fontSize: 16.0),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          child: Text(
+                            "${nsonRiwayat.size().toString()} Unit",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontFamily: "Nunito",
+                                fontSize: 16.0),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                _galeryRecord(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
+    );
   }
-  Widget _viewProfile(String label, String text){
+
+  Widget _viewProfile(String label, String text) {
     return Container(
         margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
         alignment: Alignment.centerLeft,
-        child:
-        Row(children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-                margin: EdgeInsets.only(left: 20),
-                alignment: Alignment.centerLeft,
-                child:
-                Text(label,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.0,
-                      color:   Color.fromARGB(255, 143, 143, 143),
-                    ))
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
+                  margin: EdgeInsets.only(left: 20),
+                  alignment: Alignment.centerLeft,
+                  child: Text(label,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 143, 143, 143),
+                      ))),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Container(
-                margin: EdgeInsets.only(  right: 10),
-                alignment: Alignment.centerRight,
-                child:
-                Text(text,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.0,
-                      color: Colors.black,
-                    ))
+            Expanded(
+              flex: 3,
+              child: Container(
+                  margin: EdgeInsets.only(right: 10),
+                  alignment: Alignment.centerRight,
+                  child: Text(text,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                        color: Colors.black,
+                      ))),
             ),
-          ),
-
-        ],)
-    );
+          ],
+        ));
   }
-  Widget _Buton(String text, VoidCallback callback){
-    return  Column(
-        children: <Widget>[
-          SizedBox(
-            height: 30,
-          ),
-         Container(
-            child: Padding(
 
-              padding: EdgeInsets.only(),
-              child: InkWell(
-                onTap: callback,
-                /*() {
+  Widget _Buton(String text, VoidCallback callback) {
+    return Column(children: <Widget>[
+      SizedBox(
+        height: 30,
+      ),
+      Container(
+        child: Padding(
+          padding: EdgeInsets.only(),
+          child: InkWell(
+            onTap: callback,
+            /*() {
                   print('hello');
                   AwesomeDialog(
                       context: context,
@@ -209,90 +193,99 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
                   )..show();
 
                 }*/
-                child: new Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50.0,
-                  decoration: new BoxDecoration(
-                    color: Color.fromARGB( 255,    148,193,44  ),
-                    border: new Border.all(color: Color.fromARGB(255,148,193,44), width: 1.0),
-                    borderRadius: new BorderRadius.circular(10.0),
-                  ),
-                  child: new Center(child: new Text(text, style: new TextStyle(fontWeight: FontWeight.w500,fontSize: 18.0, color: Colors.white),),),
+            child: new Container(
+              width: MediaQuery.of(context).size.width,
+              height: 50.0,
+              decoration: new BoxDecoration(
+                color: Color.fromARGB(255, 148, 193, 44),
+                border: new Border.all(
+                    color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                borderRadius: new BorderRadius.circular(10.0),
+              ),
+              child: new Center(
+                child: new Text(
+                  text,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.0,
+                      color: Colors.white),
                 ),
               ),
             ),
           ),
-        ]) ;
-  }
-  Widget _Combo(IconData icon, String label){
-
-    List _listGender = [label, "Female"];
-    return  Column(
-        children: <Widget>[
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child:
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                  SizedBox(width: 12,),
-                  Icon(
-                    icon,
-                    color: Colors.black,
-                  ),
-                  SizedBox(width: 12,),
-
-
-                  Column(
-                      mainAxisSize: MainAxisSize.max,
-                  children:[  DropdownButton(
-                        hint: Container (
-                          width: 260,
-                          child: Text(label),),
-                        value: _valGender,
-                        items: _listGender.map((value) {
-                          return DropdownMenuItem(
-                            child: Text(value),
-                            value: value,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _valGender = value;
-                          });
-                        },
-                      ),]
-                  ),],
-                ),
-
-
-          )
-        ]) ;
-  }
-  Widget _Textbox(IconData icon, String label){
-    return  Column(
-        children: <Widget>[
-        SizedBox(
-        height: 15,
         ),
+      ),
+    ]);
+  }
+
+  Widget _Combo(IconData icon, String label) {
+    List _listGender = [label, "Female"];
+    return Column(children: <Widget>[
+      SizedBox(
+        height: 15,
+      ),
+      Container(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SizedBox(
+              width: 12,
+            ),
+            Icon(
+              icon,
+              color: Colors.black,
+            ),
+            SizedBox(
+              width: 12,
+            ),
+            Column(mainAxisSize: MainAxisSize.max, children: [
+              DropdownButton(
+                hint: Container(
+                  width: 260,
+                  child: Text(label),
+                ),
+                value: _valGender,
+                items: _listGender.map((value) {
+                  return DropdownMenuItem(
+                    child: Text(value),
+                    value: value,
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _valGender = value;
+                  });
+                },
+              ),
+            ]),
+          ],
+        ),
+      )
+    ]);
+  }
+
+  Widget _Textbox(IconData icon, String label) {
+    return Column(children: <Widget>[
+      SizedBox(
+        height: 15,
+      ),
       Container(
         child: Padding(
           padding: EdgeInsets.only(),
-          child:
-          TextField(
-            style: TextStyle(color: Theme .of(context)  .accentColor),
+          child: TextField(
+            style: TextStyle(color: Theme.of(context).accentColor),
             controller: null,
             decoration: InputDecoration(
               labelText: label,
               hintStyle: CustomTextStyle.formField(context),
               enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(  color: Theme .of(context) .accentColor, width: 1.0)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).accentColor, width: 1.0)),
               focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide( color: Theme .of(context)  .accentColor, width: 1.0)),
-              prefixIcon:  Icon(
+                  borderSide: BorderSide(
+                      color: Theme.of(context).accentColor, width: 1.0)),
+              prefixIcon: Icon(
                 icon,
                 color: Colors.black,
               ),
@@ -300,107 +293,209 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
             obscureText: false,
           ),
         ),
-        )
-       ]) ;
+      )
+    ]);
   }
 
-
-
-  Widget _itemView(){
+  Widget _galeryRecord(context) {
     return Container(
-      padding: EdgeInsets.only(left: 5, right: 5, bottom: 3),
-      child:
-      Card(child:
-        Container(
-          padding: EdgeInsets.all(15),
-          child: Stack(children: [
-          Container(
-            alignment:  Alignment.centerRight ,
-            padding: EdgeInsets.only(top: 0, right: 5),
-            child:
-            CircleAvatar(
-              child: Text("C",
-                style: TextStyle(
-                  color: Colors.white,  fontWeight: FontWeight.w700, fontSize: 18 , ),
-              ),
-              backgroundColor:  Color.fromARGB(255, 148, 193, 44) ,
-            ),
-          ),
-
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Masserati DSE AT 2015",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          ListView.builder(
+            shrinkWrap: true,
+            /*physics: const AlwaysScrollableScrollPhysics(),*/
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 10),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.pushNamed(context, "/detail", arguments: nsonRiwayat.getIn(index).asMap());
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(top: 15, right: 5),
+                                    child: CircleAvatar(
+                                      child: Text(
+                                        nsonRiwayat
+                                            .getIn(index)
+                                            .get("grade")
+                                            .asString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      backgroundColor:
+                                          Color.fromARGB(255, 148, 193, 44),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
+                                          nsonRiwayat
+                                              .getIn(index)
+                                              .get("vehicle_name")
+                                              .asString(),
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                        margin: EdgeInsets.only(right: 30),
+                                      ),
+                                      const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 2.0)),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            nsonRiwayat
+                                                .getIn(index)
+                                                .get("kik_number")
+                                                .asString(),
+                                            style: const TextStyle(
+                                                fontFamily: "Nunito",
+                                                color: Color.fromARGB(
+                                                    255, 143, 143, 143),
+                                                fontSize: 12.0),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            'Jakarta',
+                                            style: const TextStyle(
+                                                fontFamily: "Nunito",
+                                                color: Color.fromARGB(
+                                                    255, 230, 36, 44),
+                                                fontSize: 12.0),
+                                          )
+                                        ],
+                                      ),
+                                      const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 1.0)),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Harga Awal',
+                                                  style: const TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: "Nunito",
+                                                      fontSize: 12.0),
+                                                ),
+                                                Text(
+                                                  'Rp.' +
+                                                      App.formatCurrency(
+                                                          nsonRiwayat
+                                                              .getIn(index)
+                                                              .get(
+                                                                  "hargapembukaan")
+                                                              .asDouble()),
+                                                  style: const TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: "Nunito",
+                                                      fontSize: 18.0),
+                                                ),
+                                              ]),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                          ),
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    nsonRiwayat
+                                                        .getIn(index)
+                                                        .get("status")
+                                                        .asString(),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: "Nunito",
+                                                        fontSize: 12.0),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    'Rp.' +
+                                                        App.formatCurrency(
+                                                            nsonRiwayat
+                                                                .getIn(index)
+                                                                .get("sold_price")
+                                                                .asDouble()),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: "Nunito",
+                                                        fontSize: 18.0),
+                                                  ),
+                                                )
+                                              ]),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-
-              const SizedBox(height: 5,),
-              Row(children: [ Text(
-                "NI121232 - Jakarta ",
-                style: const TextStyle(
-                    fontFamily: "Nunito",
-                    color: Color.fromARGB(255, 143, 143, 143),
-                    fontSize: 12.0),
-              ),
-                const SizedBox(width: 5,),
-                Text(
-                  'Jakarta',
-                  style: const TextStyle(
-                      fontFamily: "Nunito",
-                      color: Color.fromARGB(255, 148, 193, 44),
-                      fontSize: 12.0),
-                )
-
-              ],
-              )  ,
-              const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-              const SizedBox(height: 15,),
-
-              Stack(
-                children: [
-                  Text(
-                    'Harga Awal',
-                    style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 12.0),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-
-                      child: Text(
-                        'Terjual',
-                        style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 12.0),
-                      ),
-                    ),
-                  )   ],
-              ),
-
-              Stack(
-                children: [
-                  Text(
-                    'Rp 120.000.000',
-                    style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 18.0),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-
-                      child: Text(
-                        'Rp 120.000.000',
-                        style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 18.0),
-                      ),
-                    ),
-                  )   ],
-              )
-
-
-            ],
-          ),],),)
+              );
+            },
+            itemCount: nsonRiwayat.size(),
+          ),
+          SizedBox(
+            height: (30),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
       ),
     );
   }
@@ -427,14 +522,15 @@ class CustomRecord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Card(child: Padding(
+    return Card(
+      child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0),
-        child:
-        Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Expanded(
               flex: 3,
               child: _RecordDescription(
@@ -449,11 +545,13 @@ class CustomRecord extends StatelessWidget {
               Icons.more_vert,
               size: 16.0,
             ),*/
-            const SizedBox(width: 5,),
+            const SizedBox(
+              width: 5,
+            ),
           ],
         ),
-      ),)
-    ;
+      ),
+    );
   }
 }
 
@@ -475,28 +573,25 @@ class _RecordDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Padding(
-        padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-        child:
-        Stack(children: [
-
-
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      child: Stack(
+        children: [
           Container(
-            alignment:  Alignment.centerRight ,
+            alignment: Alignment.centerRight,
             padding: EdgeInsets.only(top: 15, right: 5),
-            child:
-
-            CircleAvatar(
-              child: Text("C",
+            child: CircleAvatar(
+              child: Text(
+                "C",
                 style: TextStyle(
-                  color: Colors.white,  fontWeight: FontWeight.w700, fontSize: 18 , ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
               ),
-              backgroundColor:  Color.fromARGB(255, 148, 193, 44) ,
+              backgroundColor: Color.fromARGB(255, 148, 193, 44),
             ),
           ),
-
-
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -508,36 +603,42 @@ class _RecordDescription extends StatelessWidget {
                 ),
               ),
               const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-
-              const SizedBox(height: 5,),
-              Row(children: [ Text(
-                user,
-                style: const TextStyle(
-                    fontFamily: "Nunito",
-                    color: Color.fromARGB(255, 143, 143, 143),
-                    fontSize: 12.0),
+              const SizedBox(
+                height: 5,
               ),
-                const SizedBox(width: 5,),
-                Text(
-                  'Jakarta',
-                  style: const TextStyle(
-                      fontFamily: "Nunito",
-                      color: Color.fromARGB(255, 230, 36, 44),
-                      fontSize: 12.0),
-                )
-
-              ],)
-              ,
-
-
+              Row(
+                children: [
+                  Text(
+                    user,
+                    style: const TextStyle(
+                        fontFamily: "Nunito",
+                        color: Color.fromARGB(255, 143, 143, 143),
+                        fontSize: 12.0),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'Jakarta',
+                    style: const TextStyle(
+                        fontFamily: "Nunito",
+                        color: Color.fromARGB(255, 230, 36, 44),
+                        fontSize: 12.0),
+                  )
+                ],
+              ),
               const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-              const SizedBox(height: 15,),
-
+              const SizedBox(
+                height: 15,
+              ),
               Stack(
                 children: [
                   Text(
                     'Harga Awal',
-                    style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 12.0),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Nunito",
+                        fontSize: 12.0),
                   ),
                   Align(
                     alignment: Alignment.topRight,
@@ -545,17 +646,23 @@ class _RecordDescription extends StatelessWidget {
                       color: color,
                       child: Text(
                         'Terjual',
-                        style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 12.0),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontFamily: "Nunito",
+                            fontSize: 12.0),
                       ),
                     ),
-                  )   ],
+                  )
+                ],
               ),
-
               Stack(
                 children: [
                   Text(
                     'Rp 120.000.000',
-                    style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 18.0),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Nunito",
+                        fontSize: 18.0),
                   ),
                   Align(
                     alignment: Alignment.topRight,
@@ -563,65 +670,46 @@ class _RecordDescription extends StatelessWidget {
                       color: color,
                       child: Text(
                         'Rp 120.000.000',
-                        style: const TextStyle(fontWeight: FontWeight.w500,fontFamily: "Nunito", fontSize: 18.0),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontFamily: "Nunito",
+                            fontSize: 18.0),
                       ),
                     ),
-                  )   ],
+                  )
+                ],
               )
-
-
             ],
-          ),],),
-
-      );
-
+          ),
+        ],
+      ),
+    );
   }
 }
 
-
 class CustomTextStyle {
   static TextStyle formField(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle title(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white);
   }
 
   static TextStyle subTitle(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle button(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 20, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle body(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 }
