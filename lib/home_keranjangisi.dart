@@ -91,6 +91,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
           _listNson.add(val);
         }
       });
+
       nPolupate = _listNson;
       App.log(nson.toStream());
     }

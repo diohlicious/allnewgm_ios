@@ -9,10 +9,7 @@ import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grosir/Nikita/Nson.dart';
 import 'package:grosir/Nikita/app.dart';
-
-
-
-
+import 'package:intl/intl.dart';
 
 class Menang extends StatefulWidget {
   Menang(){
@@ -28,11 +25,15 @@ class Menang extends StatefulWidget {
 }
 class _MenangState extends State<Menang> {
   Nson nPolupate = Nson.newObject();
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  String formatted='';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    this.formatted = formatter.format(now);
     App.log('init');
 
     initonCreate();
@@ -47,11 +48,10 @@ class _MenangState extends State<Menang> {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
-              child: Text("Menang", textAlign: TextAlign.center,style: TextStyle(
+              child: Text("", textAlign: TextAlign.center,style: TextStyle(
                   fontFamily: "Nunito", fontWeight: FontWeight.w700,
                   fontSize: 28
               ),),),
-
             SizedBox(
               height: 40,
             ),
@@ -256,13 +256,32 @@ class _MenangState extends State<Menang> {
     Nson nson = await ApiService.get().keranjang(args) ;
     nPolupate = nson.get("data");
 
+    Nson _listNson = Nson.newArray();
+
+    /*nPolupate.asList().forEach((val) {
+      if (string == 'live' && val["is_live"] == 1) {
+        _listNson.add(val);
+        print("$string Live");
+      } else if (val["category_name"].toString() == string &&
+          val["is_live"] == 0 &&  val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+        _listNson.add(val);
+        print("$string");
+      } else if (string == 'Semua' && val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+        _listNson.add(val);
+        print("$string Semua");
+      }
+    });*/
+    nPolupate.asList().forEach((val){
+      if (val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+        _listNson.add(val);
+      }
+    });
+
+    nPolupate = _listNson;
+
 
 
     App.log(nson.toStream());
-
-
-
-
 
     return Nson.newObject();
   }

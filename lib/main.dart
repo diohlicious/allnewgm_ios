@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:grosir/Api/apiservice.dart';
 import 'package:grosir/Nikita/app.dart';
 import 'package:grosir/UI/CameraApp.dart';
 import 'package:grosir/UI/TakePictureScreen.dart';
@@ -31,6 +33,7 @@ import 'UI/camera_widget.dart';
 import 'welcome.dart';
 import 'daftar.dart';
 import 'package:grosir/Nikita/NsGlobal.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,12 +41,15 @@ void main() async {
   NsGlobal.title = "Wakakakak";
   //title
   NsGlobal.init();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(ApiService().firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 
   App.settingpreff = await SharedPreferences.getInstance();
 }
 
 class MyApp extends StatelessWidget {
+
   Future<String> prepare() async {
     String status = await App.getSetting("sign");
     String lewati = await App.getSetting("lewati");
@@ -59,6 +65,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound:true);
     return MaterialApp(
       title: 'Grosir Mobil',
       theme: ThemeData(

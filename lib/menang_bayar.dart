@@ -19,13 +19,9 @@ class MenangBayar extends StatefulWidget {
   _MenangBayarState createState() => _MenangBayarState();
 }
 
-
-
 class _MenangBayarState extends State<MenangBayar> {
 
   void lanjutPembayaran() async {
-
-
 
     /* Navigator.push(context, new MaterialPageRoute(
         builder: (context) =>
@@ -54,7 +50,6 @@ class _MenangBayarState extends State<MenangBayar> {
     }else{
       total = args.get("tertinggi").asDouble();
     }
-
 
     App.log(args.toStream());
 
@@ -126,7 +121,6 @@ class _MenangBayarState extends State<MenangBayar> {
                     fontSize: 24),
               ),),
 
-
             SizedBox(
               height: 10,
             ),
@@ -140,15 +134,17 @@ class _MenangBayarState extends State<MenangBayar> {
         ),
       ),
     );
-
   }
 
   Widget _content(context) {
     double total = 0;
+    double adminfee = 0;
     if (args.containsKey("array")){
       for (var i = 0; i < args.get("array").size(); i++) {
         double itotal = args.get("array").getIn(i).get("tertinggi").asDouble();
+        double iadminfee = args.get("array").getIn(i).get("adminfee").asDouble();
         total = total + itotal;
+        adminfee = adminfee + iadminfee;
       }
     }else{
       total = args.get("tertinggi").asDouble();
@@ -189,7 +185,7 @@ class _MenangBayarState extends State<MenangBayar> {
         ),
 
       _TextSetting(context, "Harga Kendaraan:","Rp "+App.formatCurrency(total)),
-      _TextSetting(context, "Biaya Admin:","Rp 0"),
+      _TextSetting(context, "Biaya Admin:", App.formatCurrency(adminfee)),
       _TextSetting(context, "Total:","Rp "+App.formatCurrency(total)),
 
         SizedBox(
@@ -286,34 +282,38 @@ class _MenangBayarState extends State<MenangBayar> {
   void generateVA()async {
           double total = 0;
           Nson arg = Nson.newObject();
-          Nson byrs =   Nson.newArray();
+          Nson byrs = Nson.newArray();
           if (args.containsKey("array")){
             for (var i = 0; i < args.get("array").size(); i++) {
+              Nson unit = Nson.newObject();
               double itotal = args.get("array").getIn(i).get("tertinggi").asDouble();
-              byrs.add(  Nson.newObject().set("kik", args.get("array").getIn(i).get("kik").asString()) .set("bayar", itotal)  );
+              unit.set("kik", args.get("array").getIn(i).get("kik").asString());
+              unit.set("bayar", args.get("array").getIn(i).get("tertinggi").asString());
+              unit.set("biayaadmin", args.get("array").getIn(i).get("adminfee").asString());
+              byrs.add(unit);
               total = total + itotal;
+              print("data pilih unit bayar ${byrs.asString()}");
             }
           }else{
             total = args.get("tertinggi").asDouble();
-            byrs.add(   Nson.newObject().set("kik", args.get("kik").asString()) .set("bayar", total)  );
+            byrs.add(Nson.newObject().set("kik", args.get("kik").asString()) .set("bayar", total)  );
           }
-           
+
           arg.set("pilihBANK", "BCA");
           arg.set("totamount", total);
-          arg.set("pilihunitbayar", byrs );
-      
-      
+          arg.set("pilihunitbayar", byrs);
+
           App.log(arg.toStream());
-      
+          print("body generate va ${arg.asString()}");
+
           App.showBusy(context);
           Nson nson = await ApiService.get().generateVaApi(arg) ;
           App.log(nson.toStream());
-      
           Navigator.pop(context);
           if (nson.get("status").asString() == 'success'){
             Navigator.of(context).pushNamed(  "/menangpembayar", arguments: nson.asMap());
           }else{
-            App.showError(nson.get("description").asString() );
+            App.showError(nson.get("pesan").asString() );
           }
   }
   Widget _TextSetting(context, String text, String value) {

@@ -24,6 +24,7 @@ class _MenangPemBayarState extends State<MenangPemBayar> {
   // App.log(App.Arguments.get("args").toJson()); anka
   Nson args = Nson.newObject();
   Nson nPolulate = Nson.newObject();
+  List<bool> _isOpen = [false, false, false, false, false];
 
   refreshData() async {
     _reload();
@@ -540,17 +541,17 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
         SizedBox(
           height: 10,
         ),
-        textViewPembayaran(context, "Tipe Pembayara:", "BCA Virtual Account"),
+        textViewPembayaran(context, "Tipe Pembayaran:", "BCA Virtual Account"),
         SizedBox(
           height: 10,
         ),
-        textViewPembayaran(context, "Promo:", "10%, voucher potongan 10%"),
+        //textViewPembayaran(context, "Promo:", "10%, voucher potongan 10%"),
         SizedBox(
           height: 10,
         ),
         textViewPembayaran(
             context,
-            "Total Pembayara:",
+            "Total Pembayaran:",
             "Rp " +
                 App.formatCurrency(
                     nPolulate.get("dataVA").get("totamount").asDouble())),
@@ -564,9 +565,15 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
           height: 20,
         ),
         ExpansionPanelList(
+          animationDuration: Duration(seconds: 1),
+          expansionCallback: (i, _isExpanded) => setState(() {
+            _isOpen[i] = !_isExpanded;
+            print(_isOpen);
+          }),
           children: [
             ExpansionPanel(
-              isExpanded: true,
+              isExpanded: _isOpen[0],
+              canTapOnHeader: true,
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(
                   title: Text('ATM BCA'),
@@ -597,7 +604,8 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
               ),
             ),
             ExpansionPanel(
-              isExpanded: true,
+              isExpanded: _isOpen[1],
+              canTapOnHeader: true,
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(
                   title: Text('m-BCA (BCA Mobile'),
@@ -629,7 +637,8 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
               ),
             ),
             ExpansionPanel(
-              isExpanded: true,
+              isExpanded: _isOpen[2],
+              canTapOnHeader: true,
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(
                   title: Text('Internet Banking BCA'),
@@ -674,10 +683,7 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
           ),
         ),
         SizedBox(
-          height: (30),
-        ),
-        SizedBox(
-          height: 10,
+          height: (90),
         ),
       ],
     );

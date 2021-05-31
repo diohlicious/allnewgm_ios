@@ -1,4 +1,5 @@
 //import 'package:http/http.dart' show Client;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grosir/Nikita/Nson.dart';
 import 'package:grosir/Nikita/app.dart';
@@ -10,6 +11,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ApiService {
   final String asalKendaraanPath = "/api/registrasi/AsalKendaraanMobile";
@@ -413,9 +415,9 @@ class ApiService {
     return response;
   }
 
-  Future<http.Response> loginMobile(String email, String password) async {
+  Future<http.Response> loginMobile(String email, String password, token) async {
     var response = await postRaw("/api/auth/loginMobile",
-        body: {'email': email, 'password': password, "remember_me": false});
+        body: {'email': email, 'password': password, "remember_me": false, "refreshedToken": token});
     return response;
   }
 
@@ -508,5 +510,18 @@ class ApiService {
     List<int> imageBytes = imageFile.readAsBytesSync();
     String base64Image = Base64Codec().encode(imageBytes);
     return response;
+  }
+
+  Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    // If you're going to use other Firebase services in the background, such as Firestore,
+    // make sure you call `initializeApp` before using other Firebase services.
+    await Firebase.initializeApp();
+
+    print("Handling a background message: ${message.toString()}");
+  }
+
+  Future<void> firebaseMessagingForegroundHandler() async{
+    FirebaseMessaging _firebaseMessaging;
+    _firebaseMessaging.setForegroundNotificationPresentationOptions();
   }
 }

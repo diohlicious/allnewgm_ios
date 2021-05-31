@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "396965261180",
+    "project_id": "grosir-mobil-13688",
+    "storage_bucket": "grosir-mobil-13688.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396965261180:android:5aee786bd84a3082f53ef9",
+        "android_client_info": {
+          "package_name": "com.rkrzmail.grosir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396965261180-h5b48jm6k532n1kpbkptm6lqtd4ltibt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rkrzmail.grosir",
+            "certificate_hash": "f9dd73435265d96d291fcc3e0469a983fcf9f22f"
+          }
+        },
+        {
+          "client_id": "396965261180-u1jq13a3msbriuk8j6u0b9jcifp166qv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxG3k4zq5xBm0nUatgFW-RilNTKrdMEtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396965261180-u1jq13a3msbriuk8j6u0b9jcifp166qv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rkrzmail.grosir"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396965261180:android:b514fd0196eb2e4df53ef9",
+        "android_client_info": {
+          "package_name": "com.sip.grosirmobil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396965261180-7jg6kj23256ldhn2q4bqpq8q59qm7u4s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sip.grosirmobil",
+            "certificate_hash": "f9dd73435265d96d291fcc3e0469a983fcf9f22f"
+          }
+        },
+        {
+          "client_id": "396965261180-u1jq13a3msbriuk8j6u0b9jcifp166qv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxG3k4zq5xBm0nUatgFW-RilNTKrdMEtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396965261180-u1jq13a3msbriuk8j6u0b9jcifp166qv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rkrzmail.grosir"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
