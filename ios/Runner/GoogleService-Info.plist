@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>396965261180-7jg6kj23256ldhn2q4bqpq8q59qm7u4s.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDkVtg5mTu_WynZB5zQf3_WGP4kWnzDSs4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>396965261180</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.rkrzmail.grosir</string>
+	<key>PROJECT_ID</key>
+	<string>grosir-mobil-13688</string>
+	<key>STORAGE_BUCKET</key>
+	<string>grosir-mobil-13688.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:396965261180:ios:d229178406e438a7f53ef9</string>
+</dict>
+</plist>
