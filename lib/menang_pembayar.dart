@@ -31,6 +31,21 @@ class _MenangPemBayarState extends State<MenangPemBayar> {
     setState(() {});
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  double _total(){
+    double total = nPolulate.get("dataVA").get("totamount").asDouble();
+    nPolulate.get("detail").asList().forEach((value) {
+      var admin = double.parse(value["adminfee"]);
+      total += admin;
+    });
+    return total;
+  }
+
   Future<Nson> _reload() async {
     const int max = 50;
 
@@ -554,7 +569,8 @@ Ambil nomor antrian transaksi Teller dan isi slip setoran
             "Total Pembayaran:",
             "Rp " +
                 App.formatCurrency(
-                    nPolulate.get("dataVA").get("totamount").asDouble())),
+                    _total()
+                    )),
         SizedBox(
           height: (50),
         ),

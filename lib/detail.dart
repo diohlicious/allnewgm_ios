@@ -349,7 +349,7 @@ class _DetailState extends State<Detail> {
             SizedBox(
               width: 5,
             ),
-            Text("Jakarta",
+            Text(nPopulate.get("warehouse").asString().split(RegExp('\\s+'))[1],
                 style: TextStyle(
                     color: Color.fromARGB(255, 230, 36, 44),
                     fontWeight: FontWeight.w500,

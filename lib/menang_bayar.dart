@@ -138,6 +138,7 @@ class _MenangBayarState extends State<MenangBayar> {
 
   Widget _content(context) {
     double total = 0;
+    double totalBayar = 0;
     double adminfee = 0;
     if (args.containsKey("array")){
       for (var i = 0; i < args.get("array").size(); i++) {
@@ -145,6 +146,7 @@ class _MenangBayarState extends State<MenangBayar> {
         double iadminfee = args.get("array").getIn(i).get("adminfee").asDouble();
         total = total + itotal;
         adminfee = adminfee + iadminfee;
+        totalBayar = total + adminfee;
       }
     }else{
       total = args.get("tertinggi").asDouble();
@@ -186,7 +188,7 @@ class _MenangBayarState extends State<MenangBayar> {
 
       _TextSetting(context, "Harga Kendaraan:","Rp "+App.formatCurrency(total)),
       _TextSetting(context, "Biaya Admin:", App.formatCurrency(adminfee)),
-      _TextSetting(context, "Total:","Rp "+App.formatCurrency(total)),
+      _TextSetting(context, "Total:","Rp "+App.formatCurrency(totalBayar)),
 
         SizedBox(
           height: 50,

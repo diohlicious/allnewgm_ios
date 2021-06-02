@@ -255,7 +255,6 @@ class _MenangState extends State<Menang> {
 
     Nson nson = await ApiService.get().keranjang(args) ;
     nPolupate = nson.get("data");
-
     Nson _listNson = Nson.newArray();
 
     /*nPolupate.asList().forEach((val) {
@@ -492,7 +491,7 @@ class _MenangState extends State<Menang> {
                           child:
                           Row(children: [
                             Text(
-                              nPolupate.getIn(index).get("agreement_no").asString(),
+                              nPolupate.getIn(index).get("kik").asString(),
                               style: const TextStyle(fontSize: 11.0,
                                 fontFamily: "Nunito",
                                 color: Color.fromARGB(255, 143, 143, 143),
@@ -501,7 +500,7 @@ class _MenangState extends State<Menang> {
                             ),
                             SizedBox(width: 10,),
                             Text(
-                              "Jakarta",
+                              nPolupate.getIn(index).get("Oto_json").get("Lokasi").asString().split(RegExp('\\s+'))[1],
                               style: const TextStyle(fontSize: 11.0,
                                 fontFamily: "Nunito",
                                 color: Color.fromARGB(255, 148, 193, 44),
@@ -620,7 +619,7 @@ class _MenangState extends State<Menang> {
                           child:
                           Row(children: [
                             Text(
-                              nPolupate.getIn(index).get("agreement_no").asString(),
+                              nPolupate.getIn(index).get("kik").asString(),
                               style: const TextStyle(fontSize: 11.0,
                                 fontFamily: "Nunito",
                                 color: Color.fromARGB(255, 143, 143, 143),
@@ -629,7 +628,7 @@ class _MenangState extends State<Menang> {
                             ),
                             SizedBox(width: 10,),
                             Text(
-                              "Jakarta",
+                              nPolupate.getIn(index).get("Oto_json").get("Lokasi").asString().split(RegExp('\\s+'))[1],
                               style: const TextStyle(fontSize: 11.0,
                                 fontFamily: "Nunito",
                                 color: Color.fromARGB(255, 148, 193, 44),
@@ -764,7 +763,7 @@ class _MenangState extends State<Menang> {
                             child:
                             Row(children: [
                               Text(
-                                nPolupate.getIn(index).get("agreement_no").asString(),
+                                nPolupate.getIn(index).get("kik").asString(),
                                 style: const TextStyle(fontSize: 11.0,
                                   fontFamily: "Nunito",
                                   color: Color.fromARGB(255, 143, 143, 143),
@@ -773,7 +772,7 @@ class _MenangState extends State<Menang> {
                               ),
                               SizedBox(width: 10,),
                               Text(
-                                "Jakarta",
+                                nPolupate.getIn(index).get("Oto_json").get("Lokasi").asString().split(RegExp('\\s+'))[1],
                                 style: const TextStyle(fontSize: 11.0,
                                   fontFamily: "Nunito",
                                   color: Color.fromARGB(255, 148, 193, 44),

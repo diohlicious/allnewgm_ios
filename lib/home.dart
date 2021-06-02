@@ -1393,7 +1393,7 @@ class _HomeState extends State<Home> {
                                                     nsonLive
                                                         .getIn(index)
                                                         .get("warehouse")
-                                                        .asString(),
+                                                        .asString().split(RegExp('\\s+'))[1],
                                                     style: const TextStyle(
                                                         fontFamily: "Nunito",
                                                         color: Color.fromARGB(
@@ -1790,7 +1790,7 @@ class _HomeState extends State<Home> {
                                                   nsonAkan
                                                       .getIn(index)
                                                       .get("warehouse")
-                                                      .asString(),
+                                                      .asString().split(RegExp('\\s+'))[1],
                                                   style: const TextStyle(
                                                       fontFamily: "Nunito",
                                                       color: Color.fromARGB(
@@ -2109,7 +2109,10 @@ class _HomeState extends State<Home> {
                                             width: 5,
                                           ),
                                           Text(
-                                            'Jakarta',
+                                            nsonRiwayat
+                                                .getIn(index)
+                                                .get("warehouse")
+                                                .asString().split(RegExp('\\s+'))[1],
                                             style: const TextStyle(
                                                 fontFamily: "Nunito",
                                                 color: Color.fromARGB(

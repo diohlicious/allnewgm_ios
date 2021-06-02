@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q.apps.googleusercontent.com</string>
+	<string>396965261180-rknvf3ch4ueefdraj95qjhcje54dbm6a.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.396965261180-48hul96pi2jrcdf91acmr6k1cc93s88q</string>
+	<string>com.googleusercontent.apps.396965261180-rknvf3ch4ueefdraj95qjhcje54dbm6a</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>396965261180-7jg6kj23256ldhn2q4bqpq8q59qm7u4s.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.rkrzmail.grosir</string>
+	<string>com.rkrzmail.gmob</string>
 	<key>PROJECT_ID</key>
 	<string>grosir-mobil-13688</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:396965261180:ios:d229178406e438a7f53ef9</string>
+	<string>1:396965261180:ios:555bf65f6cf472a2f53ef9</string>
 </dict>
 </plist>

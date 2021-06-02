@@ -64,7 +64,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
   int lead = 0;
   final DateTime now = DateTime.now();
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
-  String formatted='';
+  String formatted = '';
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
 
       Nson _listNson = Nson.newArray();
 
-      nPolupate.asList().forEach((val){
+      nPolupate.asList().forEach((val) {
         if (val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
           _listNson.add(val);
         }
@@ -114,10 +114,12 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
         _listNson.add(val);
         print("$string Live");
       } else if (val["category_name"].toString() == string &&
-          val["is_live"] == 0 &&  val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+          val["is_live"] == 0 &&
+          val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
         _listNson.add(val);
         print("$string");
-      } else if (string == 'Semua' && val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+      } else if (string == 'Semua' &&
+          val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
         _listNson.add(val);
         print("$string Semua");
       }
@@ -524,7 +526,12 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                                     width: 10,
                                   ),
                                   Text(
-                                    "Jakarta",
+                                    nPolupate
+                                        .getIn(index)
+                                        .get("Oto_json")
+                                        .get("Lokasi")
+                                        .asString()
+                                        .split(RegExp('\\s+'))[1],
                                     style: const TextStyle(
                                       fontSize: 11.0,
                                       fontFamily: "Nunito",
@@ -572,7 +579,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                                 'Rp.' +
                                     App.formatCurrency(nPolupate
                                         .getIn(index)
-                                        .get("open_price")
+                                        .get("tertinggi")
                                         .asDouble()),
                                 style: const TextStyle(
                                   fontSize: 16.0,
@@ -925,7 +932,12 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                                       width: 3,
                                     ),
                                     Text(
-                                      "Jakarta",
+                                      nPolupate
+                                          .getIn(index)
+                                          .get("Oto_json")
+                                          .get("Lokasi")
+                                          .asString()
+                                          .split(RegExp('\\s+'))[1],
                                       style: const TextStyle(
                                         fontSize: 11.0,
                                         fontFamily: "Nunito",
@@ -1122,7 +1134,6 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                 onTap: () {
                   print('hello');
                   Navigator.of(context).pop();
-
                 },
                 child: new Container(
                   width: 100.0,
@@ -1215,7 +1226,10 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
         MaterialPageRoute(builder: (context) => MenangBayar(), settings: RouteSettings(arguments: nPolupate.getIn(index).asMap() ),
         ) ); */
     //App.log(context);
+    Nson _nArray = Nson.newArray();
+    _nArray.add(nPolupate.getIn(index));
     Navigator.of(context)
-        .pushNamed("/menangbayar", arguments: nPolupate.getIn(index).asMap());
+        //.pushNamed("/menangbayar", arguments: nPolupate.getIn(index).asMap());
+        .pushNamed(  "/menangbayar", arguments:  Nson.newObject().set("array", _nArray).asMap());
   }
 }

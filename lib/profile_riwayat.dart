@@ -376,7 +376,7 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
                                           Text(
                                             nsonRiwayat
                                                 .getIn(index)
-                                                .get("kik_number")
+                                                .get("kik")
                                                 .asString(),
                                             style: const TextStyle(
                                                 fontFamily: "Nunito",
@@ -388,7 +388,10 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
                                             width: 5,
                                           ),
                                           Text(
-                                            'Jakarta',
+                                            nsonRiwayat
+                                                .getIn(index)
+                                                .get("warehouse")
+                                                .asString().split(RegExp('\\s+'))[1],
                                             style: const TextStyle(
                                                 fontFamily: "Nunito",
                                                 color: Color.fromARGB(
