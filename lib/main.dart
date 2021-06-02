@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound:true);
+    ApiService().firebaseMessagingForegroundHandler();
     return MaterialApp(
       title: 'Grosir Mobil',
       theme: ThemeData(
