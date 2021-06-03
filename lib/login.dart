@@ -390,8 +390,8 @@ class _LoginState extends State<Login> {
         SizedBox(
           height: ScreenUtil.getInstance().setHeight(80),
         ),
-        Container(
-          child: FlatButton(
+        /*Container(
+          child: TextButton(
             onPressed: () {
               print('Lupa Password');
               //Navigator.of(context).pushNamed('/ubah');
@@ -415,7 +415,7 @@ class _LoginState extends State<Login> {
                     color: Color.fromARGB(255, 148, 193, 44),
                     fontSize: 14)),
           ),
-        ),
+        ),*/
         SizedBox(
           height: ScreenUtil.getInstance().setHeight(80),
         ),
