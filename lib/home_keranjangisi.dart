@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,6 +64,7 @@ class KeranjangIsi extends StatefulWidget {
 class _KeranjangIsiState extends State<KeranjangIsi> {
   Nson nPolupate = Nson.newObject();
   int lead = 0;
+  Timer timer;
   final DateTime now = DateTime.now();
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   String formatted = '';
@@ -71,29 +74,44 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
     // TODO: implement initState
     super.initState();
     formatted = formatter.format(now);
+    timer = Timer.periodic(Duration(seconds: 3), (Timer t) => _fetchData());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Future _fetchData() async {
+    print('Clock Ticking');
+    Nson args = Nson.newObject();
+    args.set("page", 1);
+    args.set("max", 50);
+
+    Nson nson = await ApiService.get().keranjang(args);
+    nPolupate = nson.get("data");
+
+    Nson _listNson = Nson.newArray();
+
+    nPolupate.asList().forEach((val) {
+      if (val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
+        _listNson.add(val);
+      }
+    });
+    //setState(() {
+      nPolupate = _listNson;
+    //});
+    setState(() {
+
+    });
+    App.log(nson.toStream());
   }
 
   Future<Nson> _reload() async {
     if (App.needBuild) {
       App.needBuild = false;
-
-      Nson args = Nson.newObject();
-      args.set("page", 1);
-      args.set("max", 50);
-
-      Nson nson = await ApiService.get().keranjang(args);
-      nPolupate = nson.get("data");
-
-      Nson _listNson = Nson.newArray();
-
-      nPolupate.asList().forEach((val) {
-        if (val["end_date"].toString().split(RegExp('\\s+'))[0] == formatted) {
-          _listNson.add(val);
-        }
-      });
-
-      nPolupate = _listNson;
-      App.log(nson.toStream());
+      _fetchData();
     }
     return Nson.newObject();
   }
@@ -470,7 +488,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
               Expanded(
                 flex: 2,
                 child: Container(
-                    height: 200,
+                    height: 250,
                     margin: const EdgeInsets.only(left: 0.0, right: 0.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.only(
@@ -588,6 +606,30 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                                   color: Colors.black,
                                 ),
                               ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Admin Fee',
+                                style: const TextStyle(
+                                  fontSize: 11.0,
+                                  fontFamily: "Nunito",
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                'Rp.' +
+                                    App.formatCurrency(nPolupate
+                                        .getIn(index)
+                                        .get("adminfee")
+                                        .asDouble()),
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Nunito",
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ],
                           ),
                           Container(
@@ -655,7 +697,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                             padding: EdgeInsets.only(),
                             child: new Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 30.0,
+                              height: 25.0,
                               decoration: new BoxDecoration(
                                 color: Colors.red,
                                 border: new Border.all(
@@ -699,7 +741,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                       SizedBox(
                         height: 5,
                       ),
-                      Stack(
+                      /*Stack(
                         children: [
                           Align(
                             alignment: Alignment.centerLeft,
@@ -724,7 +766,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                             top: 1,
                             child: Container(
                               padding: EdgeInsets.only(bottom: 5),
-                              /*  width: MediaQuery.of(context).size.width - 120,*/
+                              *//*  width: MediaQuery.of(context).size.width - 120,*//*
                               child: TextField(
                                 enabled: false,
                                 textAlign: TextAlign.center,
@@ -768,12 +810,16 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                             ),
                           ),
                         ],
-                      ),
+                      ),*/
                       SizedBox(
                         height: 5,
                       ),
-                      _butontawar("Tawar", () {
+                      _butontawar("Tawar", '', Color.fromARGB(255, 10, 132, 254), () {
                         lanjutTawar(index);
+                      }),
+                      _butontawar("Buy Now", 'Rp. '+ App.formatCurrency(nPolupate.getIn(index).get('open_price').asDouble()), Color.fromARGB(255, 148, 193, 44), () {
+                        //buyNow(index);
+                        _buyConfirm(index);
                       })
                     ],
                   ),
@@ -813,9 +859,97 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
     ]);
   }
 
-  Widget _butontawar(String text, VoidCallback callback) {
+  Future buyNow(int index) async {
+    App.Arguments.set("args", nPolupate.getIn(index));
+    Nson data = nPolupate.getIn(index);
+    //LiveBuyNowMobile
+    Nson args = Nson.newObject();
+    args.set("open_house_id", data.get("ohid").asString());
+    args.set("kik", data.get("kik").asString());
+    args.set("agreement_no", data.get("agreement_no").asString());
+    args.set("bid_price", data.get("open_price").asDouble());
+    App.log(args.toStream());
+
+    App.showBusy(context);
+    Nson nson = await ApiService.get().liveBuyNowApi(args);
+    App.log(nson.toStream());
+
+    Navigator.pop(context);
+    if (nson.get("message").asString() == 'success') {
+      AwesomeDialog(
+          context: context,
+          dialogType: DialogType.NO_HEADER,
+          animType: AnimType.BOTTOMSLIDE,
+          body: Column(
+            children: [
+              Text('Berhasil',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Nunito",
+                      height: 1.2,
+                      fontSize: 22)),
+              SizedBox(height: 10),
+              Text(
+                  data.get("vehicle_name").asString() +
+                      '  seharga  Rp ' +
+                      App.formatCurrency(data.get("open_price").asDouble()),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Nunito",
+                      height: 1.5,
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 143, 143, 143)))
+            ],
+          ),
+          btnOk: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.all(25),
+            child: Padding(
+              padding: EdgeInsets.only(),
+              child: InkWell(
+                onTap: () {
+                  //disini
+                  _filter(string: 'Semua').then((value) =>
+                      Navigator.of(context).pop());
+                },
+                child: new Container(
+                  width: 100.0,
+                  height: 50.0,
+                  decoration: new BoxDecoration(
+                    color: Color.fromARGB(255, 10, 132, 254),
+                    border: new Border.all(
+                        color: Color.fromARGB(255, 10, 132, 254), width: 1.0),
+                    borderRadius: new BorderRadius.circular(10.0),
+                  ),
+                  child: new Center(
+                    child: new Text(
+                      'Keranjang',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          btnOkOnPress: () {
+            Navigator.of(context).pop();
+          },
+          dismissOnTouchOutside: false)
+        ..show();
+    } else {
+      App.showError(nson.get("description").asString());
+    }
+  }
+
+  Widget _butontawar(String text, price, Color color,  VoidCallback callback) {
     return Column(children: <Widget>[
       Container(
+        margin: EdgeInsets.all(2),
         child: Padding(
           padding: EdgeInsets.only(),
           child: InkWell(
@@ -835,16 +969,16 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
                 }*/
             child: new Container(
               width: MediaQuery.of(context).size.width,
-              height: 40.0,
+              height: 30.0,
               decoration: new BoxDecoration(
-                color: Color.fromARGB(255, 10, 132, 254),
+                color: color,
                 border: new Border.all(
-                    color: Color.fromARGB(255, 10, 132, 254), width: 1.0),
+                    color: color, width: 1.0),
                 borderRadius: new BorderRadius.circular(10.0),
               ),
               child: new Center(
                 child: new Text(
-                  text,
+                  '$text $price',
                   style: new TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 12.0,
@@ -856,6 +990,71 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
         ),
       ),
     ]);
+  }
+
+  Future _buyConfirm(int index){
+    Nson args = nPolupate.getIn(index);
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.NO_HEADER,
+        animType: AnimType.BOTTOMSLIDE,
+        dismissOnTouchOutside: true,
+        body: Column(
+          children: [
+            Text('Apakah anda ingin  Buy Now ? ',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Nunito",
+                    height: 1.2,
+                    fontSize: 22)),
+            SizedBox(height: 10),
+            Text(
+                args.get("vehicle_name").asString() +
+                    '  seharga  Rp ' +
+                    App.formatCurrency(
+                        args.get("open_price").asDouble()),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Nunito",
+                    height: 1.5,
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 143, 143, 143)))
+          ],
+        ),
+        btnOk: Container(
+          child: Padding(
+            padding: EdgeInsets.only(),
+            child: InkWell(
+              onTap: (){
+                buyNow(index);
+                Navigator.of(context).pop();
+              },
+              child: new Container(
+                width: 100.0,
+                height: 50.0,
+                decoration: new BoxDecoration(
+                  color: Color.fromARGB(255, 148, 193, 44),
+                  border: new Border.all(
+                      color: Color.fromARGB(255, 148, 193, 44),
+                      width: 1.0),
+                  borderRadius: new BorderRadius.circular(10.0),
+                ),
+                child: new Center(
+                  child: new Text(
+                    'Buy Now',
+                    style: new TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18.0,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),)
+        .show();
   }
 
   Widget _siapbayar(int index) {
@@ -1085,11 +1284,12 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
       "agreement_no": "5672000775", //agreement_no
       "bid_price": 76200000
     };
+    double bidPrice=data.get("tertinggi").asDouble()+500000;
     Nson args = Nson.newObject();
     args.set("open_house_id", data.get("ohid").asString());
     args.set("kik", data.get("kik").asString());
     args.set("agreement_no", data.get("agreement_no").asString());
-    args.set("bid_price", data.get("tertinggi").asDouble());
+    args.set("bid_price", bidPrice);
     App.log(args.toStream());
 
     App.showBusy(context);
@@ -1098,6 +1298,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
 
     Navigator.pop(context);
     if (nson.get("message").asString() == 'success') {
+      //refreshData();
       AwesomeDialog(
           context: context,
           dialogType: DialogType.NO_HEADER,
@@ -1115,7 +1316,7 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
               Text(
                   data.get("vehicle_name").asString() +
                       '  seharga  Rp ' +
-                      App.formatCurrency(data.get("tertinggi").asDouble()),
+                      App.formatCurrency(bidPrice),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
@@ -1131,9 +1332,10 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
             child: Padding(
               padding: EdgeInsets.only(),
               child: InkWell(
-                onTap: () {
+                onTap: () async {
+                  await _filter(string: 'Semua').then((value) => Navigator.of(context).pop());
                   print('hello');
-                  Navigator.of(context).pop();
+
                 },
                 child: new Container(
                   width: 100.0,
@@ -1157,8 +1359,8 @@ class _KeranjangIsiState extends State<KeranjangIsi> {
               ),
             ),
           ),
-          btnOkOnPress: () {
-            Navigator.of(context).pop();
+          btnOkOnPress: () async {
+            await refreshData().then((value) => Navigator.of(context).pop());
           },
           dismissOnTouchOutside: false)
         ..show();

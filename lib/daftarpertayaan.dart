@@ -52,13 +52,17 @@ class _DaftarPertanyaanState extends State<DaftarPertanyaan> {
       minatList = _minatList;
       rataList = _rataList;
       mediaList = _mediaList;
-
+      kebutuhanVal = kebutuhanList.get('data').getIn(0).asMap();
+      pembelianVal = pembelianList.get('data').getIn(0).asMap();
+      minatVal = minatList.get('data').getIn(0).asMap();
+      rataVal = rataList.get('data').getIn(0).asMap();
+      mediaVal = mediaList.get('data').getIn(0).asMap();
+      daftarNson.set('kebutuhankendaraan', kebutuhanVal["code"]);
+      daftarNson.set('pembeliankebutuhankendaraan', pembelianVal["code"]);
+      daftarNson.set('usiabisnis', minatVal["code"]);
+      daftarNson.set('ratapenjualan', rataVal["code"]);
+      daftarNson.set('perputaranunit', mediaVal["code"]);
     });
-    kebutuhanVal = kebutuhanList.get('data').getIn(0).asMap();
-    pembelianVal = pembelianList.get('data').getIn(0).asMap();
-    minatVal = minatList.get('data').getIn(0).asMap();
-    rataVal = rataList.get('data').getIn(0).asMap();
-    mediaVal = mediaList.get('data').getIn(0).asMap();
   }
 
   Future _onSelect(String field, var _nSelectedVal) async {
@@ -104,11 +108,15 @@ class _DaftarPertanyaanState extends State<DaftarPertanyaan> {
     if(FunctionUtil.equalsIgnoreCase(_nson.get('message').asString(), 'success')){
       Navigator.of(context).pushNamed('/otp', arguments: {'daftarNson': daftarNson});
     }else{
-      App.showDialogBox(context, _nson.get('message').asString(), "",
+      App.showDialogBox(context, _nson.get('description').asString(), "",
           onClick: () async {
             Navigator.of(context).pop();
           });
     }
+  }
+
+  void _validation(){
+
   }
 
   @override
@@ -241,6 +249,7 @@ class _DaftarPertanyaanState extends State<DaftarPertanyaan> {
         .length > 0
         ? _combo = val.get('data').asList()
         : _combo.add({'first': 'Select'});*/
+    //_combo.add(map);
     _combo = val.get('data').asList();
     print(_combo.toString() + ' and ' + firstVal.toString());
     return Column(children: <Widget>[

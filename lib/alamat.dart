@@ -415,6 +415,8 @@ class _AlamatState extends State<Alamat> {
         nKecamatanFirst = _nSelectedVal;
         nKelurahanList = Nson(map['data']);
         nKelurahanFirst = nKelurahanList.getIn(0).asMap();
+        daftarNson.set('kelurahan',nKelurahanFirst["urban"]);
+        daftarNson.set('kodepos',nKelurahanFirst["postal_code"]);
       });
       daftarNson.set("kecamatan", _nSelectedVal["sub_district"]);
       print(nKelurahanList.asString());
@@ -445,7 +447,7 @@ class _AlamatState extends State<Alamat> {
         onClick: () async {
           Navigator.of(context).pop();
         })
-        : nKelurahanFirst == null ? App.showDialogBox(context, "Mohon Pilih Kelurahan", "",
+        : daftarNson.get('kelurahan').asString().length == 0 ? App.showDialogBox(context, "Mohon Pilih Kelurahan", "",
         onClick: () async {
           Navigator.of(context).pop();
         }): _setArgs().then((value) => Navigator.of(context)

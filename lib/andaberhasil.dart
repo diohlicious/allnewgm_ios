@@ -86,7 +86,6 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
                   child: Padding(
                       padding: EdgeInsets.only(left: 30.0, right: 30.0),
                       child: true ? _showSignIn(context) : _showSignUp(context)),
-
                 ),
               ],
             ) ,
@@ -107,6 +106,7 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
                     border: new Border.all(
                         color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
                     borderRadius: new BorderRadius.circular(10.0),
+
                   ),
                   child: new Center(child: new
                   Text('Konfirmasi',
@@ -118,10 +118,8 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
             ),
           ),
         ),
-
         debugShowCheckedModeBanner: true,
       );
-
   }
 
   Widget _showSignIn(context) {
@@ -149,7 +147,7 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
         SizedBox(
           height: 10,
         ),
-        Text("Menunggu verivikasi dari admin, harap tunggu sebentar atau balik nanti lagi", textAlign: TextAlign.center,style: TextStyle(
+        Text("Menunggu verifikasi dari admin, harap tunggu sebentar atau balik lagi nanti", textAlign: TextAlign.center,style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14,fontFamily: "Nunito",height: 1.5,
             color: Color.fromARGB(255, 143, 143, 143)
