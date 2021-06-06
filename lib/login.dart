@@ -177,132 +177,135 @@ class _LoginState extends State<Login> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    ScreenUtil.instance =
-        ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
-          ..init(context);
-    return MaterialApp(
-      title: 'Grosir Mobil',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.green,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children: <Widget>[
-            Container(
-              child: Padding(
-                padding: EdgeInsets.only(top: 5.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      height: 120,
-                      margin: const EdgeInsets.only(left: 15.0, right: 15.0),
-                      child: Image.asset(
-                        "assets/images/daftar_logo.png",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              width: 200,
-              height: 130,
-            ),
-            SizedBox(
-              height: ScreenUtil.getInstance().setHeight(10),
-            ),
-            Container(
-              child: Padding(
-                  padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                  child: _showSignIn(context)),
-            ),
-          ],
+    //ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+    //ScreenUtil.instance =
+    //    ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
+    //      ..init(context);
+    return ScreenUtilInit(
+      designSize: Size(750, 1304),
+      builder: () => MaterialApp(
+        title: 'Grosir Mobil',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.green,
+          // This makes the visual density adapt to the platform that you run
+          // the app on. For desktop platforms, the controls will be smaller and
+          // closer together (more dense) than on mobile platforms.
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        bottomSheet: Container(
-          height: 130,
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
+        home: Scaffold(
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            children: <Widget>[
               Container(
-                width: double.infinity,
                 child: Padding(
-                  padding: EdgeInsets.only(),
-                  child: InkWell(
-                    onTap: () {
-                      print('hello');
-                      //Navigator.of(context).pushNamed('/otp');
-                      _onLoading();
-                    },
-                    child: new Container(
-                      width: 100.0,
-                      height: 50.0,
-                      decoration: new BoxDecoration(
-                        color: Color.fromARGB(255, 148, 193, 44),
-                        border: new Border.all(
-                            color: Color.fromARGB(255, 148, 193, 44),
-                            width: 1.0),
-                        borderRadius: new BorderRadius.circular(10.0),
+                  padding: EdgeInsets.only(top: 5.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        height: 120,
+                        margin: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        child: Image.asset(
+                          "assets/images/daftar_logo.png",
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                      child: new Center(
-                        child: new Text(
-                          'Masuk',
-                          style: new TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18.0,
-                              color: Colors.white),
+                    ],
+                  ),
+                ),
+                width: 200,
+                height: 130,
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(10),
+              ),
+              Container(
+                child: Padding(
+                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: _showSignIn(context)),
+              ),
+            ],
+          ),
+          bottomSheet: Container(
+            height: 130,
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.only(),
+                    child: InkWell(
+                      onTap: () {
+                        print('hello');
+                        //Navigator.of(context).pushNamed('/otp');
+                        _onLoading();
+                      },
+                      child: new Container(
+                        width: 100.0,
+                        height: 50.0,
+                        decoration: new BoxDecoration(
+                          color: Color.fromARGB(255, 148, 193, 44),
+                          border: new Border.all(
+                              color: Color.fromARGB(255, 148, 193, 44),
+                              width: 1.0),
+                          borderRadius: new BorderRadius.circular(10.0),
+                        ),
+                        child: new Center(
+                          child: new Text(
+                            'Masuk',
+                            style: new TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18.0,
+                                color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Belum mempunyai akun ? ",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: Color.fromARGB(255, 143, 143, 143))),
-                  FlatButton(
-                    onPressed: () {
-                      print('daftar');
-                      Navigator.of(context).pushNamed('/daftar');
-                    },
-                    child: Text("Daftar",
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Belum mempunyai akun ? ",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 148, 193, 44),
-                            fontSize: 14)),
-                  ),
-                ],
-              )
-            ],
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 143, 143, 143))),
+                    FlatButton(
+                      onPressed: () {
+                        print('daftar');
+                        Navigator.of(context).pushNamed('/daftar');
+                      },
+                      child: Text("Daftar",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 148, 193, 44),
+                              fontSize: 14)),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
+        debugShowCheckedModeBanner: false,
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 
@@ -350,7 +353,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -388,7 +391,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         /*Container(
           child: TextButton(
@@ -417,7 +420,7 @@ class _LoginState extends State<Login> {
           ),
         ),*/
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         Container(
           child: Padding(
@@ -433,7 +436,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
       ],
     );
@@ -442,7 +445,7 @@ class _LoginState extends State<Login> {
   Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),

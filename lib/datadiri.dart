@@ -67,123 +67,126 @@ class _DataDiriState extends State<DataDiri> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    ScreenUtil.instance =
-        ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
-          ..init(context);
-    return MaterialApp(
-      title: 'Data Diri',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.green,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Data Diri Mitra",
-            style: TextStyle(
-                fontWeight: FontWeight.w800, color: Colors.black, fontSize: 28),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          leading: InkWell(
-            borderRadius: BorderRadius.circular(30.0),
-            child: Icon(
-              Icons.arrow_back,
-              color: Colors.black54,
+    //ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+    //ScreenUtil.instance =
+    //    ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
+    //      ..init(context);
+    return ScreenUtilInit(
+      designSize: Size(750, 1304),
+      builder: () => MaterialApp(
+        title: 'Data Diri',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.green,
+          // This makes the visual density adapt to the platform that you run
+          // the app on. For desktop platforms, the controls will be smaller and
+          // closer together (more dense) than on mobile platforms.
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Data Diri Mitra",
+              style: TextStyle(
+                  fontWeight: FontWeight.w800, color: Colors.black, fontSize: 28),
             ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.only(left: 1.0, right: 1.0),
-                        child: Image.asset(
-                          "assets/images/step1.png",
-                          fit: BoxFit.fitHeight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                width: MediaQuery.of(context).size.width,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leading: InkWell(
+              borderRadius: BorderRadius.circular(30.0),
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.black54,
               ),
-              SizedBox(
-                height: 0,
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                    child: SingleChildScrollView(child: _showContent(context)),
-                  )),
-            ],
-          ),
-        ),
-        bottomSheet: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.all(25),
-          child: Padding(
-            padding: EdgeInsets.only(),
-            child: InkWell(
               onTap: () {
-                print('hello');
-                _onLoading();
+                Navigator.pop(context);
               },
-              child: new Container(
-                width: 100.0,
-                height: 50.0,
-                decoration: new BoxDecoration(
-                  color: Color.fromARGB(255, 148, 193, 44),
-                  border: new Border.all(
-                      color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                  borderRadius: new BorderRadius.circular(10.0),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5.0),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.only(left: 1.0, right: 1.0),
+                          child: Image.asset(
+                            "assets/images/step1.png",
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
                 ),
-                child: new Center(
-                  child: new Text(
-                    'Selanjutnya',
-                    style: new TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                        color: Colors.white),
+                SizedBox(
+                  height: 0,
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                      child: SingleChildScrollView(child: _showContent(context)),
+                    )),
+              ],
+            ),
+          ),
+          bottomSheet: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.all(25),
+            child: Padding(
+              padding: EdgeInsets.only(),
+              child: InkWell(
+                onTap: () {
+                  print('hello');
+                  _onLoading();
+                },
+                child: new Container(
+                  width: 100.0,
+                  height: 50.0,
+                  decoration: new BoxDecoration(
+                    color: Color.fromARGB(255, 148, 193, 44),
+                    border: new Border.all(
+                        color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                    borderRadius: new BorderRadius.circular(10.0),
+                  ),
+                  child: new Center(
+                    child: new Text(
+                      'Selanjutnya',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
+        debugShowCheckedModeBanner: false,
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 
   Widget _Buton(String text, VoidCallback callback) {
     return Column(children: <Widget>[
       SizedBox(
-        height: ScreenUtil.getInstance().setHeight(50),
+        height: ScreenUtil().setHeight(50),
       ),
       Container(
         child: Padding(
@@ -231,7 +234,7 @@ class _DataDiriState extends State<DataDiri> {
   Widget _Textbox(IconData icon, String label, TextEditingController ctrler) {
     return Column(children: <Widget>[
       SizedBox(
-        height: ScreenUtil.getInstance().setHeight(30),
+        height: ScreenUtil().setHeight(30),
       ),
       Container(
         child: Padding(
@@ -264,7 +267,7 @@ class _DataDiriState extends State<DataDiri> {
       IconData icon, String label, TextEditingController ctrler, bool bool) {
     return Column(children: <Widget>[
       SizedBox(
-        height: ScreenUtil.getInstance().setHeight(30),
+        height: ScreenUtil().setHeight(30),
       ),
       Container(
         child: Padding(
@@ -313,7 +316,7 @@ class _DataDiriState extends State<DataDiri> {
           height: 0,
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -340,7 +343,7 @@ class _DataDiriState extends State<DataDiri> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -368,7 +371,7 @@ class _DataDiriState extends State<DataDiri> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -407,7 +410,7 @@ class _DataDiriState extends State<DataDiri> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -459,7 +462,7 @@ class _DataDiriState extends State<DataDiri> {
   Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),

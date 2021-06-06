@@ -45,96 +45,99 @@ class _LokasiUnitState extends State<LokasiUnit> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    ScreenUtil.instance = ScreenUtil.getInstance()
-      ..init(context);
-    ScreenUtil.instance =
-    ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
-      ..init(context);
+    //ScreenUtil.instance = ScreenUtil.getInstance()
+    //  ..init(context);
+    //ScreenUtil.instance =
+    //ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
+    //  ..init(context);
     return
-      MaterialApp(
+      ScreenUtilInit(
+        designSize: Size(750, 1304),
+        builder: () => MaterialApp(
 
-        title: 'Flutter Demo',
-        theme: ThemeData(
+          title: 'Flutter Demo',
+          theme: ThemeData(
 
-          primarySwatch: Colors.green,
+            primarySwatch: Colors.green,
 
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home:
-        Scaffold(
-
-          appBar: AppBar(
-            title: Text( "Lokasi Unit",
-              style: TextStyle(
-                  fontFamily: "Nunito",
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  fontSize: 24),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leading: InkWell(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.black54,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),),
-
-          resizeToAvoidBottomInset: false,
-          body: SingleChildScrollView(child:
-          Column(
-            children: <Widget>[
-
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                    child:  _content(context),)
-              ),
-            ],
+            visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          ) ,
+          home:
+          Scaffold(
 
-          bottomSheet: Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.all(25) ,
-            child: Padding(
-              padding: EdgeInsets.only(),
-              child: InkWell(
+            appBar: AppBar(
+              title: Text( "Lokasi Unit",
+                style: TextStyle(
+                    fontFamily: "Nunito",
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                    fontSize: 24),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leading: InkWell(
+                borderRadius: BorderRadius.circular(30.0),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black54,
+                ),
                 onTap: () {
-                  print('hello');
-                   //Navigator.of(context).pop();
-                  //_center
-                    App.openMapnavigateTo(_center.latitude, _center.longitude);
-
+                  Navigator.pop(context);
                 },
-                child: new Container(
-                  width: 100.0,
-                  height: 50.0,
-                  decoration: new BoxDecoration(
-                    color: Color.fromARGB(255, 148, 193, 44),
-                    border: new Border.all(
-                        color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                    borderRadius: new BorderRadius.circular(10.0),
+              ),),
+
+            resizeToAvoidBottomInset: false,
+            body: SingleChildScrollView(child:
+            Column(
+              children: <Widget>[
+
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                      child:  _content(context),)
+                ),
+              ],
+            ),
+            ) ,
+
+            bottomSheet: Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.all(25) ,
+              child: Padding(
+                padding: EdgeInsets.only(),
+                child: InkWell(
+                  onTap: () {
+                    print('hello');
+                     //Navigator.of(context).pop();
+                    //_center
+                      App.openMapnavigateTo(_center.latitude, _center.longitude);
+
+                  },
+                  child: new Container(
+                    width: 100.0,
+                    height: 50.0,
+                    decoration: new BoxDecoration(
+                      color: Color.fromARGB(255, 148, 193, 44),
+                      border: new Border.all(
+                          color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                      borderRadius: new BorderRadius.circular(10.0),
+                    ),
+                    child: new Center(child: new
+                    Text('Arahkan ke lokasi',
+                      style: new TextStyle(fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),),),
                   ),
-                  child: new Center(child: new
-                  Text('Arahkan ke lokasi',
-                    style: new TextStyle(fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                        color: Colors.white),),),
                 ),
               ),
             ),
           ),
-        ),
 
-        debugShowCheckedModeBanner: true,
+          debugShowCheckedModeBanner: true,
+        ),
       );
   }
   Widget
@@ -396,7 +399,7 @@ class _LokasiUnitState extends State<LokasiUnit> {
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),

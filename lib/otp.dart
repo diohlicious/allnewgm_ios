@@ -42,89 +42,92 @@ class _OTPState extends State<OTP> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    ScreenUtil.instance =
-        ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
-          ..init(context);
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children: <Widget>[
-            Container(
-              child: Padding(
-                padding: EdgeInsets.only(top: 5.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      height: 120,
-                      margin: const EdgeInsets.only(left: 15.0, right: 15.0),
-                      child: Image.asset(
-                        "assets/images/daftar_logo.png",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              width: 200,
-              height: 130,
-            ),
-            SizedBox(
-              height: ScreenUtil.getInstance().setHeight(10),
-            ),
-            Container(
-              child: Padding(
-                  padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                  child: _showSignIn(context)),
-            ),
-          ],
+    //ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+    //ScreenUtil.instance =
+    //    ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
+    //      ..init(context);
+    return ScreenUtilInit(
+      designSize: Size(750, 1304),
+      builder: () => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          // This makes the visual density adapt to the platform that you run
+          // the app on. For desktop platforms, the controls will be smaller and
+          // closer together (more dense) than on mobile platforms.
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        bottomSheet: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.all(25),
-          child: Padding(
-            padding: EdgeInsets.only(),
-            child: InkWell(
-              onTap: () {
-                print('hello');
-                //Navigator.of(context).pop();
-                //Navigator.of(context).pushNamed('/andaberhasil');
-                _onLoading();
-              },
-              child: new Container(
-                width: 100.0,
-                height: 50.0,
-                decoration: new BoxDecoration(
-                  color: Color.fromARGB(255, 148, 193, 44),
-                  border: new Border.all(
-                      color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                  borderRadius: new BorderRadius.circular(10.0),
+        home: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            children: <Widget>[
+              Container(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 5.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        height: 120,
+                        margin: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        child: Image.asset(
+                          "assets/images/daftar_logo.png",
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: new Center(
-                  child: new Text(
-                    'Verifikasi',
-                    style: new TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                        color: Colors.white),
+                width: 200,
+                height: 130,
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(10),
+              ),
+              Container(
+                child: Padding(
+                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: _showSignIn(context)),
+              ),
+            ],
+          ),
+          bottomSheet: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.all(25),
+            child: Padding(
+              padding: EdgeInsets.only(),
+              child: InkWell(
+                onTap: () {
+                  print('hello');
+                  //Navigator.of(context).pop();
+                  //Navigator.of(context).pushNamed('/andaberhasil');
+                  _onLoading();
+                },
+                child: new Container(
+                  width: 100.0,
+                  height: 50.0,
+                  decoration: new BoxDecoration(
+                    color: Color.fromARGB(255, 148, 193, 44),
+                    border: new Border.all(
+                        color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                    borderRadius: new BorderRadius.circular(10.0),
+                  ),
+                  child: new Center(
+                    child: new Text(
+                      'Verifikasi',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
+        debugShowCheckedModeBanner: true,
       ),
-      debugShowCheckedModeBanner: true,
     );
   }
 
@@ -298,7 +301,7 @@ class _OTPState extends State<OTP> {
   Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),
