@@ -1094,7 +1094,7 @@ class _TawarState extends State<Tawar> {
   Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),

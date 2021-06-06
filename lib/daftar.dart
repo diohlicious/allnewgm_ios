@@ -122,7 +122,7 @@ class _DaftarState extends State<Daftar> {
               height: 130,
             ),
             SizedBox(
-              height: ScreenUtil.getInstance().setHeight(10),
+              height: ScreenUtil().setHeight(10),
             ),
             Container(
               child: Padding(
@@ -250,7 +250,7 @@ class _DaftarState extends State<Daftar> {
                 fontSize: 14,
                 color: Color.fromARGB(255, 143, 143, 143))),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -277,7 +277,7 @@ class _DaftarState extends State<Daftar> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -304,7 +304,7 @@ class _DaftarState extends State<Daftar> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         /*Container(
           child: Padding(
@@ -343,7 +343,7 @@ class _DaftarState extends State<Daftar> {
           ),
         ),*/
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(60),
+          height: ScreenUtil().setHeight(60),
         ),
         Container(
           child: Column(
@@ -387,7 +387,7 @@ class _DaftarState extends State<Daftar> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         Container(
           child: Padding(
@@ -403,7 +403,7 @@ class _DaftarState extends State<Daftar> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -468,7 +468,7 @@ class _DaftarState extends State<Daftar> {
   Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),

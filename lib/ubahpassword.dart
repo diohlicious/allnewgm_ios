@@ -38,94 +38,97 @@ class _UbahPassState extends State<UbahPass> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    ScreenUtil.instance = ScreenUtil.getInstance()
-      ..init(context);
-    ScreenUtil.instance =
-    ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
-      ..init(context);
+    //ScreenUtil.instance = ScreenUtil.getInstance()
+    //  ..init(context);
+    //ScreenUtil.instance =
+    //ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
+    //  ..init(context);
     return
-      MaterialApp(
+      ScreenUtilInit(
+        designSize: Size(750, 1304),
+        builder: () => MaterialApp(
 
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.green,
-          // This makes the visual density adapt to the platform that you run
-          // the app on. For desktop platforms, the controls will be smaller and
-          // closer together (more dense) than on mobile platforms.
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home:
-        Scaffold(
-          appBar:
-          AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leading: InkWell(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.black54,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-
-              },
-            ),
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // Try running your application with "flutter run". You'll see the
+            // application has a blue toolbar. Then, without quitting the app, try
+            // changing the primarySwatch below to Colors.green and then invoke
+            // "hot reload" (press "r" in the console where you ran "flutter run",
+            // or simply save your changes to "hot reload" in a Flutter IDE).
+            // Notice that the counter didn't reset back to zero; the application
+            // is not restarted.
+            primarySwatch: Colors.green,
+            // This makes the visual density adapt to the platform that you run
+            // the app on. For desktop platforms, the controls will be smaller and
+            // closer together (more dense) than on mobile platforms.
+            visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          body:  Column(children:[
-              SizedBox(
-                height: ScreenUtil.getInstance().setHeight(10),
-              ),
-              Container(
-                child: Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                    child:  _showSignIn(context)
-                ) ,
-
-              ),
-            ],
-          ) ,
-          bottomSheet: Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.all(25) ,
-            child: Padding(
-              padding: EdgeInsets.only(),
-              child: InkWell(
+          home:
+          Scaffold(
+            appBar:
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leading: InkWell(
+                borderRadius: BorderRadius.circular(30.0),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black54,
+                ),
                 onTap: () {
-                  print('hello');
-                  //Navigator.of(context).pop();// Navigator.of(context).pushNamed('/andaberhasil');
-                  _onLoading();
+                  Navigator.pop(context);
+
                 },
-                child: new Container(
-                  width: 100.0,
-                  height: 50.0,
-                  decoration: new BoxDecoration(
-                    color: Color.fromARGB(255, 148, 193, 44),
-                    border: new Border.all(
-                        color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                    borderRadius: new BorderRadius.circular(10.0),
+              ),
+            ),
+            body:  Column(children:[
+                SizedBox(
+                  height: ScreenUtil().setHeight(10),
+                ),
+                Container(
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                      child:  _showSignIn(context)
+                  ) ,
+
+                ),
+              ],
+            ) ,
+            bottomSheet: Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.all(25) ,
+              child: Padding(
+                padding: EdgeInsets.only(),
+                child: InkWell(
+                  onTap: () {
+                    print('hello');
+                    //Navigator.of(context).pop();// Navigator.of(context).pushNamed('/andaberhasil');
+                    _onLoading();
+                  },
+                  child: new Container(
+                    width: 100.0,
+                    height: 50.0,
+                    decoration: new BoxDecoration(
+                      color: Color.fromARGB(255, 148, 193, 44),
+                      border: new Border.all(
+                          color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                      borderRadius: new BorderRadius.circular(10.0),
+                    ),
+                    child: new Center(child: new
+                    Text('Ubah',
+                      style: new TextStyle(fontWeight: FontWeight.w500,
+                          fontSize: 18.0,
+                          color: Colors.white),),),
                   ),
-                  child: new Center(child: new
-                  Text('Ubah',
-                    style: new TextStyle(fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                        color: Colors.white),),),
                 ),
               ),
             ),
           ),
-        ),
 
-        debugShowCheckedModeBanner: true,
+          debugShowCheckedModeBanner: true,
+        ),
       );
 
   }
@@ -206,7 +209,7 @@ class _UbahPassState extends State<UbahPass> {
             fontWeight: FontWeight.w500,
             fontSize: 14)),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -249,7 +252,7 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -291,7 +294,7 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -337,7 +340,7 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         Container(
 
@@ -346,7 +349,7 @@ class _UbahPassState extends State<UbahPass> {
         ),
 
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         Container(
           child: Padding(
@@ -363,7 +366,7 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
        /* Container(
           child: Padding(
@@ -411,7 +414,7 @@ class _UbahPassState extends State<UbahPass> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(30),
+          height: ScreenUtil().setHeight(30),
         ),
         Container(
           child: Padding(
@@ -443,7 +446,7 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(50),
+          height: ScreenUtil().setHeight(50),
         ),
         Container(
           child: Padding(
@@ -475,17 +478,19 @@ class _UbahPassState extends State<UbahPass> {
           ),
         ),
         SizedBox(
-          height: ScreenUtil.getInstance().setHeight(80),
+          height: ScreenUtil().setHeight(80),
         ),
         Container(
           child: Padding(
             padding: EdgeInsets.only(),
-            child: RaisedButton(
+            child: ElevatedButton(
               child: Text(
                 "Controller.displaySignUpMenuButton",
                 style: CustomTextStyle.button(context),
               ),
-              color: Colors.blueGrey,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey)
+              ),
               onPressed:  null,
             ),
           ),
@@ -498,7 +503,7 @@ class _UbahPassState extends State<UbahPass> {
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.white.withOpacity(0.6),
         ),
