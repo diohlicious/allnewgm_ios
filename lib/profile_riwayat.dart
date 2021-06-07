@@ -57,13 +57,13 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
       title = "";
     }
 
-    return MaterialApp(
+    return /*MaterialApp(
       title: '',
       theme: ThemeData(
         primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Scaffold(
+      home: */Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -127,9 +127,9 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
             ),
           ),
         ),
-      ),
-      debugShowCheckedModeBanner: false,
-    );
+      );
+      //debugShowCheckedModeBanner: false,
+    //);
   }
 
   Widget _viewProfile(String label, String text) {
@@ -311,7 +311,10 @@ class _ProfileRiwayatState extends State<ProfileRiwayat> {
                 margin: EdgeInsets.only(bottom: 10),
                 child: GestureDetector(
                   onTap: (){
-                    Navigator.pushNamed(context, "/detail", arguments: nsonRiwayat.getIn(index).asMap());
+                    nsonRiwayat.getIn(index).get('ordernumber').asString().length > 0 ?
+                    Navigator.pushNamed(context, "/menangpembayar", arguments: nsonRiwayat.getIn(index).asMap()):
+                    Navigator.pushNamed(context, "/detail", arguments: nsonRiwayat.getIn(index).asMap())
+                    ;
                   },
                   child: Card(
                     child: Padding(
