@@ -1446,14 +1446,9 @@ class _HomeState extends State<Home> {
                                                                     .getIn(
                                                                         index)
                                                                     .get(
-                                                                        "PriceNow")
+                                                                        "isBid")
                                                                     .asInteger() ==
-                                                                nsonLive
-                                                                    .getIn(
-                                                                        index)
-                                                                    .get(
-                                                                        "bottom_price")
-                                                                    .asInteger()
+                                                                0
                                                             ? Colors.black87
                                                             : Colors
                                                                 .blue.shade700,
