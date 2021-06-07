@@ -471,7 +471,7 @@ class _DetailState extends State<Detail> {
                           index);
                     },
                     child: Container(
-                      margin: EdgeInsets.only(left: 15, right: 15),
+                      margin: EdgeInsets.only(left: 3, right: 3),
                       decoration: BoxDecoration(
                         /*color: const Color(0xff7c94b6),*/
                         image: DecorationImage(

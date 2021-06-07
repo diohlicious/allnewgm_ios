@@ -782,7 +782,7 @@ class _MenangState extends State<Menang> {
                             ],),
                           ),
 
-                          SizedBox(height: 10,),
+                          SizedBox(height: 7),
                           Text(
                             'Dimenangkan seharga',
                             style: const TextStyle(fontSize: 11.0 ,
@@ -790,9 +790,25 @@ class _MenangState extends State<Menang> {
                               color: Colors.black,
                             ),
                           ),
-                          SizedBox(height: 5,),
+                          SizedBox(height: 3),
                           Text(
                             'Rp.' + App.formatCurrency(nPolupate.getIn(index).get("user_tertinggi").asDouble()),
+                            style: const TextStyle(fontSize: 16.0,
+                              fontFamily: "Nunito",
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,),
+                          ),
+                          SizedBox(height: 7),
+                          Text(
+                            'Admin Fee',
+                            style: const TextStyle(fontSize: 11.0 ,
+                              fontFamily: "Nunito",
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            'Rp.' + App.formatCurrency(nPolupate.getIn(index).get("adminfee").asDouble()),
                             style: const TextStyle(fontSize: 16.0,
                               fontFamily: "Nunito",
                               fontWeight: FontWeight.w500,
