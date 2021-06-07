@@ -51,7 +51,8 @@ class _MenangPemBayarState extends State<MenangPemBayar> {
 
     //live
     Nson arg = Nson.newObject();
-    arg.set("ref", args.get("orderno").asString());
+    arg.set("ref", args.get("orderno").asString().length > 0 ? args.get("orderno").asString():args.get("ordernumber").asString());
+    //args.get("orderno").asString()??
 
     Nson nson = await ApiService.get().invoiceVaApi(arg);
     nPolulate = nson.get("data");

@@ -25,6 +25,7 @@ class _DetailState extends State<Detail> {
   String ohid = "";
   String kik = "";
   Nson args = Nson.newObject();
+  bool isVisible = true;
 
   @override
   void initState() {
@@ -61,6 +62,8 @@ class _DetailState extends State<Detail> {
     App.log(nson.get("data").get("time_server").asString());
     int lead = App.wcounterlead(nson.get("data").get("time_server").asString());
     nPopulate.set("lead", lead);
+
+    print('ini end data '+ nPopulate.get('PriceNow').asString());
 
     mySLides = nPopulate.get("images");
 
@@ -118,6 +121,7 @@ class _DetailState extends State<Detail> {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     args = Nson(arguments);
     App.log(args.asString());
+    args.get('PriceNow').asString().length > 0 ? isVisible = true : isVisible = false;
 
     ohid = args.get("ohid").asString();
     kik = args.get("kik").asString();
@@ -174,36 +178,40 @@ class _DetailState extends State<Detail> {
             ),
             resizeToAvoidBottomInset: false,
             body: _Content(),
-            bottomSheet: Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.all(25),
-              child: Padding(
-                padding: EdgeInsets.only(),
-                child: InkWell(
-                  onTap: () {
-                    print('hello');
-                    //Navigator.of(context).pushNamed('/tawar');
-                    args.set("lead", nPopulate.get("lead").asInteger());
-                    args.set(
-                        "start_date", nPopulate.get("start_date").asString());
-                    tawar(args, nPopulate);
-                  },
-                  child: new Container(
-                    width: 100.0,
-                    height: 50.0,
-                    decoration: new BoxDecoration(
-                      color: Color.fromARGB(255, 148, 193, 44),
-                      border: new Border.all(
-                          color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                      borderRadius: new BorderRadius.circular(10.0),
-                    ),
-                    child: new Center(
-                      child: new Text(
-                        'Tawar',
-                        style: new TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.0,
-                            color: Colors.white),
+            bottomSheet: Visibility(
+              visible: isVisible,
+              //maintainSize: isVisible,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.all(25),
+                child: Padding(
+                  padding: EdgeInsets.only(),
+                  child: InkWell(
+                    onTap: () {
+                      print('hello');
+                      //Navigator.of(context).pushNamed('/tawar');
+                      args.set("lead", nPopulate.get("lead").asInteger());
+                      args.set(
+                          "start_date", nPopulate.get("start_date").asString());
+                      tawar(args, nPopulate);
+                    },
+                    child: new Container(
+                      width: 100.0,
+                      height: 50.0,
+                      decoration: new BoxDecoration(
+                        color: Color.fromARGB(255, 148, 193, 44),
+                        border: new Border.all(
+                            color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: new Center(
+                        child: new Text(
+                          'Tawar',
+                          style: new TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                              color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
