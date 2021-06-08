@@ -23,6 +23,7 @@ class Login extends StatefulWidget {
 }
 
 class _LogInPageState extends State<Login> {
+  
   Widget _buildPageIndicator(bool isCurrentPage) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2.0),
@@ -74,6 +75,7 @@ class _LogInPageState extends State<Login> {
 }
 
 class _LoginState extends State<Login> {
+  Nson daftarNson = Nson.newObject();
   String _token;
   Stream<String> _tokenStream;
 
@@ -128,6 +130,8 @@ class _LoginState extends State<Login> {
   void _onLoading() async {
     App.showBusy(context);
     ApiService apiService = ApiService();
+    daftarNson.set('email', myEmail.text);
+    daftarNson.set('state', 'login');
 
     //var response = await apiService.loginMasuk("baihakitanjung12@gmail.com", "123456789") ;
     var response = await apiService.loginMobile(myEmail.text, myPassword.text, _token);
@@ -142,8 +146,10 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       //berhasil disini
       if (nson.get('message').asString() == 'error') {
-        App.showDialogBox(context, nson.get("description").asString(), '',
+
+        App.showDialogBox(context, nson.get("description").asString(), 'okk',
             onClick: () async {
+          //print(nson.get('description').asString().split(" ").contains("verifikasi"));
           Navigator.of(context).pop();
         });
       } else {
@@ -164,10 +170,19 @@ class _LoginState extends State<Login> {
         Navigator.of(context).pushNamed('/home');
       }
     } else {
-      App.showDialogBox(context, nson.get("error").asString(), '',
-          onClick: () async {
-        Navigator.of(context).pop();
-      });
+      if(nson.get('error').asString().split(" ").contains("verifikasi") ){
+
+        App.showDialogBox(context, nson.get("error").asString(), '',
+            onClick: () async {
+              Navigator.of(context).pushNamed('/otp', arguments: {'daftarNson': daftarNson} );
+            });
+      } else {
+        App.showDialogBox(context, nson.get("error").asString(), '',
+            onClick: () async {
+              Navigator.of(context).pop();
+            });
+      }
+
     }
   }
 

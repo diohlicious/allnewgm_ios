@@ -9,6 +9,7 @@ import 'package:grosir/Nikita/NsGlobal.dart';
 import 'Api/apiservice.dart';
 import 'Nikita/Nson.dart';
 import 'Nikita/app.dart';
+import 'package:grosir/Nikita/app.dart';
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'UI/function_util.dart';
@@ -105,9 +106,12 @@ class _DaftarPertanyaanState extends State<DaftarPertanyaan> {
     Nson _nson = await apiService.getNson(response);
     print(response.body);
     daftarNson.set('userId', _nson.get('userId'));
+    //App.showBusy(context);
     if(FunctionUtil.equalsIgnoreCase(_nson.get('message').asString(), 'success')){
+      Navigator.of(context).pop();
       Navigator.of(context).pushNamed('/otp', arguments: {'daftarNson': daftarNson});
     }else{
+      Navigator.of(context).pop();
       App.showDialogBox(context, _nson.get('description').asString(), "",
           onClick: () async {
             Navigator.of(context).pop();
@@ -211,6 +215,7 @@ class _DaftarPertanyaanState extends State<DaftarPertanyaan> {
             child: InkWell(
               onTap: () {
                 //print('hello');
+                App.showBusy(context);
                  _onNext();
                 //print(daftarNson.toJson());
                 //Navigator.of(context).pushNamed('/otp', arguments: {'daftarNson': daftarNson});

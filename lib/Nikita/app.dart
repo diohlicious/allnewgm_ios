@@ -84,7 +84,7 @@ class App {
             ),
           ),
         ),
-        dismissOnTouchOutside: false) .show();
+        dismissOnTouchOutside: true) .show();
   }
   static showBusy(BuildContext context){
     showDialog(

@@ -18,7 +18,9 @@ class OTP extends StatefulWidget {
 
 class _OTPState extends State<OTP> {
   String userId;
+  String email;
   Nson daftarNson = Nson.newObject();
+  Nson _nsonBody = Nson.newObject();
   TextEditingController ctrler1 = TextEditingController();
   TextEditingController ctrler2 = TextEditingController();
   TextEditingController ctrler3 = TextEditingController();
@@ -35,8 +37,9 @@ class _OTPState extends State<OTP> {
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    Nson daftarNson = arguments["daftarNson"];
+    daftarNson = arguments["daftarNson"];
     userId = daftarNson.get('userId').asString();
+    email = daftarNson.get('email').asString();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -137,19 +140,29 @@ class _OTPState extends State<OTP> {
         '${ctrler1.text}${ctrler2.text}${ctrler3.text}${ctrler4.text}${ctrler5.text}${ctrler6.text}';
     print(otp);
     ApiService apiService = ApiService();
-    var response = await apiService.validasiOtpMobile(otp, userId);
+    var response = await apiService.validasiOtpMobile(otp, email);
     Nson _nres = await apiService.getNson(response);
     print(_nres.asString());
     Navigator.pop(context); //pop dialog
-    if (_nres.get('message').asString() == 'success') {
-      //berhasil disini
-      Navigator.of(context).pushNamed('/andaberhasil', arguments: daftarNson);
-    } else {
-      App.showDialogBox(context, 'otp: $otp userId: $userId', _nres.get('description').asString(),
-          onClick: () async {
-        Navigator.of(context).pop();
-      });
-    }
+      //dari sini
+      if (_nres.get('message').asString() == 'success') {
+        //berhasil disini
+        if (daftarNson.get('state').asString()=='login'){
+          App.showDialogBox(context, 'Sukses', 'Silahkan Login Kembali',
+              onClick: () async {
+                Navigator.of(context).pushNamed('/login');
+              });
+        } else {
+          Navigator.of(context).pushNamed(
+              '/andaberhasil', arguments: {'daftarNson': daftarNson});
+        }
+      } else {
+        App.showDialogBox(context, 'otp: $otp userId: $userId', _nres.get('description').asString(),
+            onClick: () async {
+              Navigator.of(context).pop();
+            });
+      }
+      //ke sini
   }
 
   void _onLoading() async {
@@ -193,19 +206,24 @@ class _OTPState extends State<OTP> {
         daftarNson.get('namalengkap').asString(),
         daftarNson.get('phone').asString(),
         daftarNson.get('userId').asString(),
-        daftarNson.get('email').asString());
+        email);
 
-    print(response.body);
+    print(response.body + daftarNson.get('email').asString());
 
-    Navigator.pop(context); //pop dialog
-    if (response.statusCode == 200) {
+    _nsonBody = await apiService.getNson(response);
+
+    // //pop dialog
+    if (_nsonBody.get("message").asString() == "success") {
       //berhasil disini
-      App.showDialogBox(context, "Informasi", "Kirim Ulang Kode OTP Berhasil",
+      Navigator.pop(context);
+      App.showDialogBox(context, "Informasi", _nsonBody.get("description").asString(),
           onClick: () async {
         Navigator.of(context).pop();
       });
     } else {
-      App.showDialogBox(context, "Peringatan", "Kirim Ulang Kode OTP Gagal",
+      Navigator.pop(context);
+      print("ini description" + daftarNson.get('email').asString());
+      App.showDialogBox(context, "Peringatan", _nsonBody.get('description').asString(),
           onClick: () async {
         Navigator.of(context).pop();
       });

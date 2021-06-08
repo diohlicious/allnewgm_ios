@@ -23,6 +23,7 @@ class _SelamatState extends State<Selamat> {
   String myEmail;
   String myPassword;
   String _token;
+  Nson daftarNson = Nson.newObject();
   Stream<String> _tokenStream;
   bool _initialized = false;
   bool _error = false;
@@ -62,6 +63,7 @@ class _SelamatState extends State<Selamat> {
   }
 
   void _onNext()async{
+    //print()
     App.showBusy(context);
     ApiService apiService = ApiService();
 
@@ -96,9 +98,10 @@ class _SelamatState extends State<Selamat> {
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    Nson daftarNson = arguments["daftarNson"];
+    daftarNson = arguments["daftarNson"];
     myEmail = daftarNson.get('email').asString();
     myPassword = daftarNson.get('password').asString();
+    print('this $myEmail $myPassword' + daftarNson.asString());
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

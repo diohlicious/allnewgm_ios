@@ -423,14 +423,14 @@ class ApiService {
 
   Future<http.Response> validasiOtpMobile(String kodeOtp, userId) async {
     var response = await postRaw("/api/registrasi/validasiOtpMobile",
-        body: {'userId': userId, 'kodeOtp': kodeOtp});
+        body: {'email': userId, 'kodeOtp': kodeOtp});
     return response;
   }
 
   Future<http.Response> ResendOtp(String _name, _phone, _userId, _email) async {
     //String userId =  '1557';//await App.getSetting("email");
     //String email =   await App.getSetting("email");
-    var response = await postRaw("/api/registrasi/ResendOtp", body: {
+    var response = await postRaw("/api/registrasi/resendOtp", body: {
       'tokenType': "Register",
       'phone': _phone,
       'namalengkap': _name,
