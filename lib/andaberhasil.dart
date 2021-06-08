@@ -17,12 +17,14 @@ class AndaBerhasil extends StatefulWidget {
 }
 
 class _AndaBerhasilState extends State<AndaBerhasil> {
+  Nson daftarNson = Nson.newObject();
 
 
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    Nson daftarNson = arguments["daftarNson"];
+    daftarNson = arguments["daftarNson"];
+    print('this ' + daftarNson.asString());
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -99,7 +101,7 @@ class _AndaBerhasilState extends State<AndaBerhasil> {
                 padding: EdgeInsets.only(),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/selamat', arguments: daftarNson);
+                    Navigator.of(context).pushNamed('/selamat', arguments: {'daftarNson': daftarNson});
                   },
                   child: new Container(
                     width: 100.0,

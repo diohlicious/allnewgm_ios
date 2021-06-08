@@ -1446,7 +1446,7 @@ class _HomeState extends State<Home> {
                                                                     .getIn(
                                                                         index)
                                                                     .get(
-                                                                        "isBid")
+                                                                        "UserBid")
                                                                     .asInteger() ==
                                                                 0
                                                             ? Colors.black87
