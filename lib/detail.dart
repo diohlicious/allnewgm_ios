@@ -886,8 +886,8 @@ class _DetailState extends State<Detail> {
         }
         return new Center(
           child: new SizedBox(
-            height: Curves.easeOut.transform(value) * 300,
-            width: Curves.easeOut.transform(value) * 350,
+            height: Curves.easeOut.transform(value) * 320,
+            width: Curves.easeOut.transform(value) * 480,
             child: child,
           ),
         );
