@@ -55,6 +55,7 @@ class ApiService {
   final String wareHousePath = "/api/lokasi/warehouseMobile";
 
   static const String host = "dev.grosirmobil.id";
+
   //192.168.1.147:8181
   //dev.grosirmobil.id
 
@@ -320,7 +321,7 @@ class ApiService {
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Host": host,
-      "Accept":"application/json",
+      "Accept": "application/json",
       "Content-Length": jbody.length.toString(),
       "Authorization": "Bearer  " + await App.getSetting("auth")
     };
@@ -415,9 +416,21 @@ class ApiService {
     return response;
   }
 
-  Future<http.Response> loginMobile(String email, String password, token) async {
-    var response = await postRaw("/api/auth/loginMobile",
-        body: {'email': email, 'password': password, "remember_me": false, "refreshedToken": token});
+  Future<http.Response> changePassword(String oldpassword, newpassword) async {
+    String email = await App.getSetting("email");
+    var response = await postRaw("/api/profile/changePassword",
+        body: {'email': email, 'old_password': oldpassword, 'new_password': newpassword, 'confirm_password': newpassword});
+    return response;
+  }
+
+  Future<http.Response> loginMobile(
+      String email, String password, token) async {
+    var response = await postRaw("/api/auth/loginMobile", body: {
+      'email': email,
+      'password': password,
+      "remember_me": false,
+      "refreshedToken": token
+    });
     return response;
   }
 
@@ -520,7 +533,7 @@ class ApiService {
     print("Handling a background message: ${message.toString()}");
   }
 
-  Future<void> firebaseMessagingForegroundHandler() async{
+  Future<void> firebaseMessagingForegroundHandler() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     //FirebaseMessaging messaging
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
@@ -535,8 +548,10 @@ class ApiService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
-      await _firebaseMessaging.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound:true);
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+          alert: true, badge: true, sound: true);
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       print('User granted provisional permission');
     } else {
       print('User declined or has not accepted permission');
