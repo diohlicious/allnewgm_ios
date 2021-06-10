@@ -1,8 +1,5 @@
-
-
-
-
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:grosir/Api/apiservice.dart';
 import 'dart:io';
@@ -10,17 +7,17 @@ import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grosir/Nikita/app.dart';
 
+import 'Nikita/Nson.dart';
 import 'UI/CustomIcons.dart';
 import 'UI/SocialIcons.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class UbahPass extends StatefulWidget {
   @override
   _UbahPassState createState() => _UbahPassState();
 }
-
-
 
 class _UbahPassState extends State<UbahPass> {
   TextEditingController myPassword = TextEditingController();
@@ -30,7 +27,7 @@ class _UbahPassState extends State<UbahPass> {
   bool showpassLama = true;
   bool showpassBaru = true;
   bool showpassConf = true;
-
+  bool result = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,106 +40,145 @@ class _UbahPassState extends State<UbahPass> {
     //ScreenUtil.instance =
     //ScreenUtil(width: 750, height: 1304, allowFontScaling: true)
     //  ..init(context);
-    return
-      ScreenUtilInit(
-        designSize: Size(750, 1304),
-        builder: () => MaterialApp(
-
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            // This is the theme of your application.
-            //
-            // Try running your application with "flutter run". You'll see the
-            // application has a blue toolbar. Then, without quitting the app, try
-            // changing the primarySwatch below to Colors.green and then invoke
-            // "hot reload" (press "r" in the console where you ran "flutter run",
-            // or simply save your changes to "hot reload" in a Flutter IDE).
-            // Notice that the counter didn't reset back to zero; the application
-            // is not restarted.
-            primarySwatch: Colors.green,
-            // This makes the visual density adapt to the platform that you run
-            // the app on. For desktop platforms, the controls will be smaller and
-            // closer together (more dense) than on mobile platforms.
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          home:
-          Scaffold(
-            appBar:
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              leading: InkWell(
-                borderRadius: BorderRadius.circular(30.0),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Colors.black54,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-
-                },
+    return ScreenUtilInit(
+      designSize: Size(750, 1304),
+      builder: () => MaterialApp(
+        title: 'Grosir Mobil',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.green,
+          // This makes the visual density adapt to the platform that you run
+          // the app on. For desktop platforms, the controls will be smaller and
+          // closer together (more dense) than on mobile platforms.
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leading: InkWell(
+              borderRadius: BorderRadius.circular(30.0),
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.black54,
               ),
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
-            body:  Column(children:[
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
                 SizedBox(
                   height: ScreenUtil().setHeight(10),
                 ),
                 Container(
                   child: Padding(
                       padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                      child:  _showSignIn(context)
-                  ) ,
-
+                      child: _showSignIn(context)),
                 ),
               ],
-            ) ,
-            bottomSheet: Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.all(25) ,
-              child: Padding(
-                padding: EdgeInsets.only(),
-                child: InkWell(
-                  onTap: () {
-                    print('hello');
-                    //Navigator.of(context).pop();// Navigator.of(context).pushNamed('/andaberhasil');
-                    _onLoading();
-                  },
-                  child: new Container(
-                    width: 100.0,
-                    height: 50.0,
-                    decoration: new BoxDecoration(
-                      color: Color.fromARGB(255, 148, 193, 44),
-                      border: new Border.all(
-                          color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
-                      borderRadius: new BorderRadius.circular(10.0),
-                    ),
-                    child: new Center(child: new
-                    Text('Ubah',
-                      style: new TextStyle(fontWeight: FontWeight.w500,
+            ),
+          ),
+          bottomSheet: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.all(25),
+            child: Padding(
+              padding: EdgeInsets.only(),
+              child: InkWell(
+                onTap: () {
+                  print('hello');
+                  //Navigator.of(context).pop();// Navigator.of(context).pushNamed('/andaberhasil');
+                  //_onLoading();
+                  _onValidation().then((value) {
+                  }/*value?Navigator.of(context).pop():null*/);
+                },
+                child: new Container(
+                  width: 100.0,
+                  height: 50.0,
+                  decoration: new BoxDecoration(
+                    color: Color.fromARGB(255, 148, 193, 44),
+                    border: new Border.all(
+                        color: Color.fromARGB(255, 148, 193, 44), width: 1.0),
+                    borderRadius: new BorderRadius.circular(10.0),
+                  ),
+                  child: new Center(
+                    child: new Text(
+                      'Ubah',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.w500,
                           fontSize: 18.0,
-                          color: Colors.white),),),
+                          color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-
-          debugShowCheckedModeBanner: true,
         ),
-      );
-
+        debugShowCheckedModeBanner: true,
+      ),
+    );
   }
-  void  _onLoading() async {
+
+  Future _onValidation() async {
+    myPassword.text.length == 0
+        ? App.showDialogBox(context, "Ubah Passwod", "Mohon Isi Password Lama",
+            onClick: () {
+            Navigator.of(context).pop();
+          })
+        : myPasswordBaru.text.length == 0
+            ? App.showDialogBox(
+                context, "Ubah Passwod", "Mohon Isi Passord Baru", onClick: () {
+                Navigator.of(context).pop();
+              })
+            : myPasswordConf.text.length == 0
+                ? App.showDialogBox(
+                    context, "Ubah Passwod", "Mohon Confirmasi Passord",
+                    onClick: () {
+                    Navigator.of(context).pop();
+                  })
+                : myPasswordBaru.text != myPasswordConf.text
+                    ? App.showDialogBox(context, "Ubah Passwod",
+                        "Password Konfirmasi Tidak Sama", onClick: () {
+                        Navigator.of(context).pop();
+                      })
+                    : myPasswordBaru.text == myPassword.text
+                        ? App.showDialogBox(context, "Ubah Passwod",
+                            "Mohon Ganti Passord Baru Anda.", onClick: () {
+                            Navigator.of(context).pop();
+                          })
+                        : await _onLoading();
+  }
+
+  Future _onLoading() async {
+
     App.showBusy(context);
     ApiService apiService = ApiService();
-    var response = await apiService.changePasswordForgot("", myPassword.text) ;
-     print (response.body);
+    var response =
+        await apiService.changePassword(myPassword.text, myPasswordBaru.text);
+    Nson nson = await apiService.getNson(response);
+    print(response.body);
 
     Navigator.pop(context); //pop dialog
     if (response.statusCode == 200) {
       //berhasil disini
-
-    }else{
+      await App.showDialogBox(
+          context, "Ubah Passwod", nson.get("meta").get("message").asString(),
+          onClick: () {
+            result = true;
+        Navigator.of(context).pop(true);
+      });
+    } else {
       /*AwesomeDialog(
           context: context,
           dialogType: DialogType.NO_HEADER,
@@ -186,27 +222,33 @@ class _UbahPassState extends State<UbahPass> {
             ),
           ),
           dismissOnTouchOutside: false)  .show();*/
-      App.showDialogBox(context, "Ubah Passwod","Gagal",  onClick: (){
-        Navigator.of(context).pop();
+      App.showDialogBox(
+          context, "Gagal", nson.get("meta").get("message").asString(),
+          onClick: () {
+            result = false;
+                Navigator.of(context).pop();
       });
-    }
 
+    }
   }
+
   Widget _showSignIn(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text("Ubah Password", textAlign: TextAlign.left,style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 27)),
+        Text("Ubah Password",
+            textAlign: TextAlign.left,
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 27)),
         SizedBox(
           height: 20,
         ),
-        Text("Rubah password lama anda", textAlign: TextAlign.left,style: TextStyle(
-            fontFamily: "Nunito",
-            color: Color.fromARGB(255, 143, 143, 143),
-            fontWeight: FontWeight.w500,
-            fontSize: 14)),
+        Text("Rubah password lama anda",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                fontFamily: "Nunito",
+                color: Color.fromARGB(255, 143, 143, 143),
+                fontWeight: FontWeight.w500,
+                fontSize: 14)),
         SizedBox(
           height: ScreenUtil().setHeight(50),
         ),
@@ -214,36 +256,30 @@ class _UbahPassState extends State<UbahPass> {
           child: Padding(
             padding: EdgeInsets.only(),
             child: TextField(
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .accentColor),
+              style: TextStyle(color: Theme.of(context).accentColor),
               controller: myPassword,
               decoration: InputDecoration(
                 labelText: "Password Lama",
                 hintStyle: CustomTextStyle.formField(context),
                 enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 prefixIcon: const Icon(
                   Icons.lock_outline,
                   color: Colors.black,
                 ),
-                suffixIcon: FlatButton(onPressed: (){
-                  setState(() {
-                    showpassLama=!showpassLama;
-                  });
-                },
-
-                  child:  Icon(
-                    showpassLama ? Icons.visibility_off:   Icons.visibility ,
-                    color: Colors.black)   ,
+                suffixIcon: FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      showpassLama = !showpassLama;
+                    });
+                  },
+                  child: Icon(
+                      showpassLama ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.black),
                 ),
               ),
               obscureText: showpassLama,
@@ -257,35 +293,41 @@ class _UbahPassState extends State<UbahPass> {
           child: Padding(
             padding: EdgeInsets.only(),
             child: TextField(
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .accentColor),
+              onChanged: (value) {
+                setState(() {
+                  myPasswordBaru
+                    ..text = value
+                    ..selection = TextSelection.collapsed(
+                        offset: myPasswordBaru.text.length);
+                });
+              },
+              style: TextStyle(color: Theme.of(context).accentColor),
               controller: myPasswordBaru,
               decoration: InputDecoration(
                 labelText: "Password baru",
                 hintStyle: CustomTextStyle.formField(context),
                 enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 prefixIcon: const Icon(
                   Icons.lock_outline,
                   color: Colors.black,
                 ),
-                suffixIcon: FlatButton(onPressed: (){
-                  setState(() {
-                    showpassBaru=!showpassBaru;
-                  });
-                },
-                  child:  Icon(
-                      showpassBaru ? Icons.visibility_off:   Icons.visibility ,
-                      color: Colors.black)   ,
+                suffixIcon: Container(
+                  width: 80,
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        showpassBaru = !showpassBaru;
+                      });
+                    },
+                    child: Icon(
+                        showpassBaru ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.black),
+                  ),
                 ),
               ),
               obscureText: showpassBaru,
@@ -299,54 +341,65 @@ class _UbahPassState extends State<UbahPass> {
           child: Padding(
             padding: EdgeInsets.only(),
             child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  myPasswordConf
+                    ..text = value
+                    ..selection = TextSelection.collapsed(
+                        offset: myPasswordConf.text.length);
+                });
+              },
               obscureText: showpassConf,
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .accentColor),
+              style: TextStyle(color: Theme.of(context).accentColor),
               controller: myPasswordConf,
               decoration: InputDecoration(
                 //Add th Hint text here.
-                labelText: "Confim Pasword baru",
+                labelText: "Confirm Pasword baru",
                 hintStyle: CustomTextStyle.formField(context),
                 enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 prefixIcon: const Icon(
                   Icons.lock_outline,
                   color: Colors.black,
                 ),
-                suffixIcon: FlatButton(onPressed: (){
-                  setState(() {
-                    showpassConf=!showpassConf;
-                  });
-                },
-                  child:  Icon(
-                      myPasswordBaru.text == myPasswordConf.text ?  Icons.check : Icons.remove_circle_outline ,
-                      color: myPasswordBaru.text == myPasswordConf.text ?    Colors.green :   Colors.red)   ,
+                suffixIcon: Container(
+                  width: 90,
+                  child: Row(
+                    children: [
+                      Icon(
+                          myPasswordBaru.text == myPasswordConf.text
+                              ? Icons.check
+                              : Icons.remove_circle_outline,
+                          color: myPasswordBaru.text == myPasswordConf.text
+                              ? Colors.green
+                              : Colors.red),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            showpassConf = !showpassConf;
+                          });
+                        },
+                        icon: Icon(
+                            showpassConf
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
-
-
               ),
-
             ),
           ),
         ),
         SizedBox(
           height: ScreenUtil().setHeight(80),
         ),
-        Container(
-
-
-
-        ),
-
+        Container(),
         SizedBox(
           height: ScreenUtil().setHeight(80),
         ),
@@ -357,8 +410,7 @@ class _UbahPassState extends State<UbahPass> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 horizontalLine(),
-                Text("Masuk",
-                    style: CustomTextStyle.body(context)),
+                Text("Masuk", style: CustomTextStyle.body(context)),
                 horizontalLine()
               ],
             ),
@@ -367,7 +419,7 @@ class _UbahPassState extends State<UbahPass> {
         SizedBox(
           height: ScreenUtil().setHeight(30),
         ),
-       /* Container(
+        /* Container(
           child: Padding(
             padding: EdgeInsets.only(),
             child: InkWell(
@@ -402,8 +454,6 @@ class _UbahPassState extends State<UbahPass> {
         SizedBox(
           height: 10,
         ),
-
-
       ],
     );
   }
@@ -428,14 +478,10 @@ class _UbahPassState extends State<UbahPass> {
                 hintStyle: CustomTextStyle.formField(context),
                 enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 prefixIcon: const Icon(
                   Icons.email,
                   color: Colors.white,
@@ -460,14 +506,10 @@ class _UbahPassState extends State<UbahPass> {
                 hintStyle: CustomTextStyle.formField(context),
                 enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme
-                            .of(context)
-                            .accentColor, width: 1.0)),
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 prefixIcon: const Icon(
                   Icons.lock,
                   color: Colors.white,
@@ -488,9 +530,9 @@ class _UbahPassState extends State<UbahPass> {
                 style: CustomTextStyle.button(context),
               ),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey)
-              ),
-              onPressed:  null,
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blueGrey)),
+              onPressed: null,
             ),
           ),
         ),
@@ -498,8 +540,7 @@ class _UbahPassState extends State<UbahPass> {
     );
   }
 
-  Widget horizontalLine() =>
-      Padding(
+  Widget horizontalLine() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
           width: ScreenUtil().setWidth(120),
@@ -511,51 +552,29 @@ class _UbahPassState extends State<UbahPass> {
   Widget emailErrorText() => Text("Controller.displayErrorEmailLogIn");
 }
 
-
-
 class CustomTextStyle {
   static TextStyle formField(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 18.0, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle title(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white);
   }
 
   static TextStyle subTitle(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle button(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 20, fontWeight: FontWeight.normal, color: Colors.white);
   }
 
   static TextStyle body(BuildContext context) {
-    return Theme
-        .of(context)
-        .textTheme
-        .title
-        .copyWith(
+    return Theme.of(context).textTheme.title.copyWith(
         fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   }
 }

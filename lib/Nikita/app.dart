@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
@@ -105,6 +106,12 @@ class App {
         );
       },
     );
+  }
+
+  String generateMd5(String input) {
+    String salt = 'Gr0\$iR';
+    String email = 'email';
+    return md5.convert(utf8.encode(input)).toString();
   }
 
   static Future<void> openMap(double latitude, double longitude) async {
