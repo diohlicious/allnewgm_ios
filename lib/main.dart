@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grosir/Api/apiservice.dart';
@@ -34,6 +35,7 @@ import 'welcome.dart';
 import 'daftar.dart';
 import 'package:grosir/Nikita/NsGlobal.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  FirebaseAnalytics analytics = FirebaseAnalytics();
 
   Future<String> prepare() async {
     String status = await App.getSetting("sign");
@@ -67,6 +70,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ApiService().firebaseMessagingForegroundHandler();
     return MaterialApp(
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       title: 'Grosir Mobil',
       theme: ThemeData(
         // This is the theme of your application.

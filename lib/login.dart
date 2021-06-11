@@ -99,7 +99,9 @@ class _LoginState extends State<Login> {
     myEmail.text = 'sunu@studioh.id';
     myPassword.text = '123456789';
     //firebase token
-    FirebaseMessaging.instance.getToken().then(setToken);
+    FirebaseMessaging.instance.getToken(
+      vapidKey: "BKLDHH8h4iWCZ0T505HXU7psqbfkBzw_u3cxAgfkzZCNXwcKnOGQN8g1xaFSEe6hiYKJfCG8aiIInR0cHDPwYGI",
+    ).then(setToken);
     _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
     _tokenStream.listen(setToken);
 
