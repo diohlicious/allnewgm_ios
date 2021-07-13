@@ -96,8 +96,8 @@ class _LoginState extends State<Login> {
     //baihakitanjung12@gmail.com
     myEmail.text = 'baihakitanjung12@gmail.com';
     myEmail.text = 'rkrzmail@gmail.com';
-    myEmail.text = 'sunu@studioh.id';
-    myPassword.text = '123456789';
+    myEmail.text = '';
+    myPassword.text = '';
     //firebase token
     FirebaseMessaging.instance.getToken(
       vapidKey: "BKLDHH8h4iWCZ0T505HXU7psqbfkBzw_u3cxAgfkzZCNXwcKnOGQN8g1xaFSEe6hiYKJfCG8aiIInR0cHDPwYGI",

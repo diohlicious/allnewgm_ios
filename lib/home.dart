@@ -233,8 +233,8 @@ class _HomeState extends State<Home> {
   }*/
   Future<Nson> _reload() async {
     //maintenance
-    Nson mtNson = await ApiService().checkMaintenanceApi();
-    if (mtNson.get('is_mobile').asInteger() == 1) {
+    //Nson mtNson = await ApiService().checkMaintenanceApi();
+    //if (mtNson.get('is_mobile').asInteger() == 1) {
       const int max = 100;
       //statuscode":302 dan 401 dipaksa relogin
       String filter = await App.getSetting("filter");
@@ -345,13 +345,13 @@ class _HomeState extends State<Home> {
 
       //setState(() { });
 
-    } else {
-      App.showDialogBox(context, mtNson.get("description").asString(), '',
-          onClick: () async {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-      });
-    }
+    //} else {
+    //  App.showDialogBox(context, mtNson.get("description").asString(), '',
+    //      onClick: () async {
+    //    Navigator.of(context)
+    //        .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    //  });
+    //}
     /*else {
       App.showDialogBox(context,   mtNson.get("description").asString(),'' ,  onClick: () async{
         Navigator.of(context)

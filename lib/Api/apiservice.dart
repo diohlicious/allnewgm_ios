@@ -537,13 +537,14 @@ class ApiService {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     //FirebaseMessaging messaging
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
+      //alert: true,
+      //announcement: false,
+      //badge: true,
+      //carPlay: false,
+      //criticalAlert: false,
+      //provisional: false,
+      //sound: true,
+      provisional: true,
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
