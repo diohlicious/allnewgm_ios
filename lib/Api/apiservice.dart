@@ -54,7 +54,7 @@ class ApiService {
   final String validationOtpPath = "/api/registrasi/validasiOtpMobile";
   final String wareHousePath = "/api/lokasi/warehouseMobile";
 
-  static const String host = "grosirmobil.id";
+  static const String host = "dev.grosirmobil.id";
 
   //192.168.1.147:8181
   //dev.grosirmobil.id
